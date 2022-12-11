@@ -64,6 +64,25 @@ func FilesAtRef(r *git.Repository, hash plumbing.Hash, path string) ([]NiceTree,
 	return files, nil
 }
 
+func FileContentAtRef(r *git.Repository, hash plumbing.Hash, path string) (string, error) {
+	c, err := r.CommitObject(hash)
+	if err != nil {
+		return "", fmt.Errorf("commit object: %w", err)
+	}
+
+	tree, err := c.Tree()
+	if err != nil {
+		return "", fmt.Errorf("file tree: %w", err)
+	}
+
+	file, err := tree.File(path)
+	if err != nil {
+		return "", err
+	}
+
+	return file.Contents()
+}
+
 func makeNiceTree(es []object.TreeEntry) []NiceTree {
 	nts := []NiceTree{}
 	for _, e := range es {
