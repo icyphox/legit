@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -42,11 +41,11 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d.renderFiles(files, w)
+	d.listFiles(files, w)
 	return
 }
 
-func (d *deps) RepoFiles(w http.ResponseWriter, r *http.Request) {
+func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	treePath := flow.Param(r.Context(), "...")
 	ref := flow.Param(r.Context(), "ref")
@@ -74,21 +73,32 @@ func (d *deps) RepoFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d.renderFiles(files, w)
+	d.listFiles(files, w)
 	return
 }
 
-func (d *deps) renderFiles(files []git.NiceTree, w http.ResponseWriter) {
-	tpath := filepath.Join(d.c.Template.Dir, "*")
-	t := template.Must(template.ParseGlob(tpath))
+func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
+	name := flow.Param(r.Context(), "name")
+	treePath := flow.Param(r.Context(), "...")
+	ref := flow.Param(r.Context(), "ref")
 
-	data := make(map[string]interface{})
-	data["files"] = files
-	data["meta"] = d.c.Meta
+	name = filepath.Clean(name)
+	// TODO: remove .git
+	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	repo, err := gogit.PlainOpen(path)
+	if err != nil {
+		Write404(w, *d.c)
+		return
+	}
 
-	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
+	hash, err := repo.ResolveRevision(plumbing.Revision(ref))
+	if err != nil {
 		Write500(w, *d.c)
 		log.Println(err)
 		return
 	}
+
+	contents, err := git.FileContentAtRef(repo, *hash, treePath)
+	d.showFile(contents, w)
+	return
 }

@@ -9,6 +9,7 @@ func Handlers(c *config.Config) *flow.Mux {
 	mux := flow.New()
 	d := deps{c}
 	mux.HandleFunc("/:name", d.RepoIndex, "GET")
-	mux.HandleFunc("/:name/tree/:ref/...", d.RepoFiles, "GET")
+	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
+	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")
 	return mux
 }

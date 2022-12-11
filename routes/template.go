@@ -2,11 +2,12 @@ package routes
 
 import (
 	"html/template"
+	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 
 	"icyphox.sh/legit/config"
+	"icyphox.sh/legit/git"
 )
 
 func Write404(w http.ResponseWriter, c config.Config) {
@@ -23,10 +24,32 @@ func Write500(w http.ResponseWriter, c config.Config) {
 	t.Execute(w, nil)
 }
 
-func funcMap() template.FuncMap {
-	return template.FuncMap{
-		"prettyMode": func(mode uint32) string {
-			return os.FileMode(mode).String()
-		},
+func (d *deps) listFiles(files []git.NiceTree, w http.ResponseWriter) {
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	data := make(map[string]interface{})
+	data["files"] = files
+	data["meta"] = d.c.Meta
+
+	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
+		Write500(w, *d.c)
+		log.Println(err)
+		return
+	}
+}
+
+func (d *deps) showFile(content string, w http.ResponseWriter) {
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	data := make(map[string]interface{})
+	data["content"] = content
+	data["meta"] = d.c.Meta
+
+	if err := t.ExecuteTemplate(w, "file", data); err != nil {
+		Write500(w, *d.c)
+		log.Println(err)
+		return
 	}
 }

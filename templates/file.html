@@ -1,0 +1,18 @@
+{{ define "file" }}
+<html>
+{{ template "head" . }}
+
+  <header>
+    <h1>{{ .meta.Title }}</h1>
+    <h2>{{ .meta.Description }}</h2>
+  </header>
+  <body>
+    {{ template "nav" . }}
+    <main>
+      <pre>
+        {{ .content }}
+      </pre>
+    </main>
+  </body>
+</html>
+{{ end }}
