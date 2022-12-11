@@ -24,31 +24,29 @@ func Write500(w http.ResponseWriter, c config.Config) {
 	t.Execute(w, nil)
 }
 
-func (d *deps) listFiles(files []git.NiceTree, w http.ResponseWriter) {
+func (d *deps) listFiles(files []git.NiceTree, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Template.Dir, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
-	data := make(map[string]interface{})
 	data["files"] = files
 	data["meta"] = d.c.Meta
 
 	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
-		Write500(w, *d.c)
 		log.Println(err)
 		return
 	}
 }
 
-func (d *deps) showFile(content string, w http.ResponseWriter) {
+func (d *deps) showFile(content string, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Template.Dir, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
-	data := make(map[string]interface{})
+	// TODO: Process content here.
+
 	data["content"] = content
 	data["meta"] = d.c.Meta
 
 	if err := t.ExecuteTemplate(w, "file", data); err != nil {
-		Write500(w, *d.c)
 		log.Println(err)
 		return
 	}

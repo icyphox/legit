@@ -1,13 +1,12 @@
 package routes
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 
 	"github.com/alexedwards/flow"
-	gogit "github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"icyphox.sh/legit/config"
 	"icyphox.sh/legit/git"
 )
@@ -21,27 +20,25 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	name = filepath.Clean(name)
 	// TODO: remove .git
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
-	repo, err := gogit.PlainOpen(path)
+	gr, err := git.Open(path, "")
 	if err != nil {
 		Write404(w, *d.c)
 		return
 	}
 
-	head, err := repo.Head()
+	files, err := gr.FileTree("")
 	if err != nil {
 		Write500(w, *d.c)
 		log.Println(err)
 		return
 	}
 
-	files, err := git.FilesAtRef(repo, head.Hash(), "")
-	if err != nil {
-		Write500(w, *d.c)
-		log.Println(err)
-		return
-	}
+	data := make(map[string]any)
+	data["name"] = name
+	// TODO: make this configurable
+	data["ref"] = "master"
 
-	d.listFiles(files, w)
+	d.listFiles(files, data, w)
 	return
 }
 
@@ -53,27 +50,25 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	name = filepath.Clean(name)
 	// TODO: remove .git
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
-	repo, err := gogit.PlainOpen(path)
+	gr, err := git.Open(path, ref)
 	if err != nil {
 		Write404(w, *d.c)
 		return
 	}
 
-	hash, err := repo.ResolveRevision(plumbing.Revision(ref))
+	files, err := gr.FileTree(treePath)
 	if err != nil {
 		Write500(w, *d.c)
 		log.Println(err)
 		return
 	}
 
-	files, err := git.FilesAtRef(repo, *hash, treePath)
-	if err != nil {
-		Write500(w, *d.c)
-		log.Println(err)
-		return
-	}
+	data := make(map[string]any)
+	data["name"] = name
+	data["ref"] = ref
+	data["parent"] = treePath
 
-	d.listFiles(files, w)
+	d.listFiles(files, data, w)
 	return
 }
 
@@ -85,20 +80,50 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	name = filepath.Clean(name)
 	// TODO: remove .git
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
-	repo, err := gogit.PlainOpen(path)
+	gr, err := git.Open(path, ref)
 	if err != nil {
 		Write404(w, *d.c)
 		return
 	}
 
-	hash, err := repo.ResolveRevision(plumbing.Revision(ref))
+	contents, err := gr.FileContent(treePath)
+	data := make(map[string]any)
+	data["name"] = name
+	data["ref"] = ref
+
+	d.showFile(contents, data, w)
+	return
+}
+
+func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
+	name := flow.Param(r.Context(), "name")
+	ref := flow.Param(r.Context(), "ref")
+
+	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	gr, err := git.Open(path, ref)
+	if err != nil {
+		Write404(w, *d.c)
+		return
+	}
+
+	commits, err := gr.Commits()
 	if err != nil {
 		Write500(w, *d.c)
 		log.Println(err)
 		return
 	}
 
-	contents, err := git.FileContentAtRef(repo, *hash, treePath)
-	d.showFile(contents, w)
-	return
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	data := make(map[string]interface{})
+	data["commits"] = commits
+	data["meta"] = d.c.Meta
+	data["name"] = name
+	data["ref"] = ref
+
+	if err := t.ExecuteTemplate(w, "log", data); err != nil {
+		log.Println(err)
+		return
+	}
 }

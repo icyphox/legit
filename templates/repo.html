@@ -9,13 +9,41 @@
   <body>
     {{ template "nav" . }}
     <main>
+      {{ $repo := .name }}
+      {{ $ref := .ref }}
+      {{ $parent := .parent }}
+
+      <table>
+        <tr>
+          <td></td>
+          <td><a href="../">..</a>
+        </tr>
       {{ range .files }}
-      {{ if .IsFile }}
-      <p>{{ .Mode }} {{ .Name }} {{ .Size }} </p>
-      {{ else }}
-      <p>d-------- {{ .Name}}/</p>
+        {{ if .IsFile }}
+        <tr>
+          <td><code>{{ .Mode }}</code></td>
+          <td>
+          {{ if $parent }}
+          <a href="/{{ $repo }}/blob/{{ $ref }}/{{ $parent }}/{{ .Name }}">{{ .Name }}</a>
+          {{ else }}
+          <a href="/{{ $repo }}/blob/{{ $ref }}/{{ .Name }}">{{ .Name }}</a>
+          {{ end }}
+          </td>
+        </tr>
+        {{ else }}
+        <tr>
+          <td><code>{{ .Mode }}</code></td>
+          <td>
+          {{ if $parent }}
+          <a href="/{{ $repo }}/tree/{{ $ref }}/{{ $parent }}/{{ .Name }}">{{ .Name }}/</a>
+          {{ else }}
+          <a href="{{ $repo }}/tree/{{ $ref }}/{{ .Name }}">{{ .Name }}/</a>
+          {{ end }}
+          </td>
+        </tr>
+        {{ end }}
       {{ end }}
-      {{ end }}
+      </table>
     </main>
   </body>
 </html>

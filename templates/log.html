@@ -1,0 +1,21 @@
+{{ define "log" }}
+<html>
+{{ template "head" . }}
+
+  <header>
+    <h1>{{ .meta.Title }}</h1>
+    <h2>{{ .meta.Description }}</h2>
+  </header>
+  <body>
+    {{ template "nav" . }}
+    <main>
+      {{ $repo := .name }}
+      {{ range .commits }}
+      <p><a href="/{{ $repo }}/commit/{{ .Hash.String }}">{{ slice .Hash.String 0 8 }}<a>
+        &mdash; {{ .Author.Name }}</p>
+      <p><pre>{{ .Message }}</pre></p>
+      {{ end }}
+    </main>
+  </body>
+</html>
+{{ end }}

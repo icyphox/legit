@@ -11,5 +11,6 @@ func Handlers(c *config.Config) *flow.Mux {
 	mux.HandleFunc("/:name", d.RepoIndex, "GET")
 	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
 	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")
+	mux.HandleFunc("/:name/log/:ref", d.Log, "GET")
 	return mux
 }
