@@ -31,17 +31,8 @@ type NiceTree struct {
 	IsFile bool
 }
 
-func FilesAtHead(r *git.Repository, path string) ([]NiceTree, error) {
-	head, err := r.Head()
-	if err != nil {
-		return nil, fmt.Errorf("getting head: %w", err)
-	}
-
-	return FilesAtRef(r, head, path)
-}
-
-func FilesAtRef(r *git.Repository, ref *plumbing.Reference, path string) ([]NiceTree, error) {
-	c, err := r.CommitObject(ref.Hash())
+func FilesAtRef(r *git.Repository, hash plumbing.Hash, path string) ([]NiceTree, error) {
+	c, err := r.CommitObject(hash)
 	if err != nil {
 		return nil, fmt.Errorf("commit object: %w", err)
 	}
