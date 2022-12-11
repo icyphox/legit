@@ -8,10 +8,39 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-func AllCommits(r *git.Repository) ([]*object.Commit, error) {
-	ci, err := r.Log(&git.LogOptions{All: true})
+type GitRepo struct {
+	r *git.Repository
+	h plumbing.Hash
+}
+
+func Open(path string, ref string) (*GitRepo, error) {
+	var err error
+	g := GitRepo{}
+	g.r, err = git.PlainOpen(path)
 	if err != nil {
-		return nil, fmt.Errorf("all commits: %w", err)
+		return nil, fmt.Errorf("opening %s: %w", path, err)
+	}
+
+	if ref == "" {
+		head, err := g.r.Head()
+		if err != nil {
+			return nil, fmt.Errorf("getting head of %s: %w", path, err)
+		}
+		g.h = head.Hash()
+	} else {
+		hash, err := g.r.ResolveRevision(plumbing.Revision(ref))
+		if err != nil {
+			return nil, fmt.Errorf("resolving rev %s for %s: %w", ref, path, err)
+		}
+		g.h = *hash
+	}
+	return &g, nil
+}
+
+func (g *GitRepo) Commits() ([]*object.Commit, error) {
+	ci, err := g.r.Log(&git.LogOptions{From: g.h})
+	if err != nil {
+		return nil, fmt.Errorf("commits from ref: %w", err)
 	}
 
 	commits := []*object.Commit{}
@@ -23,49 +52,8 @@ func AllCommits(r *git.Repository) ([]*object.Commit, error) {
 	return commits, nil
 }
 
-// A nicer git tree representation.
-type NiceTree struct {
-	Name   string
-	Mode   string
-	Size   int64
-	IsFile bool
-}
-
-func FilesAtRef(r *git.Repository, hash plumbing.Hash, path string) ([]NiceTree, error) {
-	c, err := r.CommitObject(hash)
-	if err != nil {
-		return nil, fmt.Errorf("commit object: %w", err)
-	}
-
-	files := []NiceTree{}
-	tree, err := c.Tree()
-	if err != nil {
-		return nil, fmt.Errorf("file tree: %w", err)
-	}
-
-	if path == "" {
-		files = makeNiceTree(tree.Entries)
-	} else {
-		o, err := tree.FindEntry(path)
-		if err != nil {
-			return nil, err
-		}
-
-		if !o.Mode.IsFile() {
-			subtree, err := tree.Tree(path)
-			if err != nil {
-				return nil, err
-			}
-
-			files = makeNiceTree(subtree.Entries)
-		}
-	}
-
-	return files, nil
-}
-
-func FileContentAtRef(r *git.Repository, hash plumbing.Hash, path string) (string, error) {
-	c, err := r.CommitObject(hash)
+func (g *GitRepo) FileContent(path string) (string, error) {
+	c, err := g.r.CommitObject(g.h)
 	if err != nil {
 		return "", fmt.Errorf("commit object: %w", err)
 	}
@@ -81,18 +69,4 @@ func FileContentAtRef(r *git.Repository, hash plumbing.Hash, path string) (strin
 	}
 
 	return file.Contents()
-}
-
-func makeNiceTree(es []object.TreeEntry) []NiceTree {
-	nts := []NiceTree{}
-	for _, e := range es {
-		mode, _ := e.Mode.ToOSFileMode()
-		nts = append(nts, NiceTree{
-			Name:   e.Name,
-			Mode:   mode.String(),
-			IsFile: e.Mode.IsFile(),
-		})
-	}
-
-	return nts
 }
