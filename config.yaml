@@ -1,0 +1,7 @@
+git:
+  scanPath: /home/icy/code/tmp
+template:
+  dir: ./templates
+meta:
+  title: git good
+  description: i think it's a skill issue

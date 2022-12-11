@@ -1,0 +1,22 @@
+{{ define "repo" }}
+<html>
+{{ template "head" . }}
+
+  <header>
+    <h1>{{ .meta.Title }}</h1>
+    <h2>{{ .meta.Description }}</h2>
+  </header>
+  <body>
+    {{ template "nav" . }}
+    <main>
+      {{ range .files }}
+      {{ if .IsFile }}
+      <p>{{ .Mode }} {{ .Name }} {{ .Size }} </p>
+      {{ else }}
+      <p>d-------- {{ .Name}}/</p>
+      {{ end }}
+      {{ end }}
+    </main>
+  </body>
+</html>
+{{ end }}
