@@ -44,6 +44,11 @@
         {{ end }}
       {{ end }}
       </table>
+      <article>
+        <pre>
+          {{- if .readme }}{{ .readme }}{{- end -}}
+        </pre>
+      </article>
     </main>
   </body>
 </html>

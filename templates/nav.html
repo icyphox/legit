@@ -1,9 +1,10 @@
 {{ define "nav" }}
   <nav>
     <ul>
-      <li>some
-      <li>thing
-      <li>here
+    <li><a href="/">all repos</a>
+    <li><a href="/{{ .name }}">{{ .name }}</a>
+    <li><a href="/{{ .name }}/tree/{{ .ref }}/">tree</a>
+    <li><a href="/{{ .name }}/log/{{ .ref }}">log</a>
     </ul>
   </nav>
 {{ end }}
