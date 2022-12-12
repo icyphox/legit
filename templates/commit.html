@@ -10,7 +10,7 @@
     {{ template "nav" . }}
     <main>
       <section>
-        <p>author: {{ .commit.Author.Name }} <{{ .commit.Author.Email}}> on {{ .commit.Author.When }}</p>
+        <p>author: {{ .commit.Author.Name }} <{{ .commit.Author.Email}}> on {{ .commit.Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</p>
         <p>commit: <a href="/{{ .name }}/commit/{{ .commit.This }}">
           {{ .commit.This }}
         </a>
@@ -40,6 +40,9 @@
                 {{- end -}}
                 {{- if eq .Op.String "-" -}}
                 <span style="color: red">{{ .String }}</span>
+                {{- end -}}
+                {{- if eq .Op.String " " -}}
+                <span style="color: gray">{{ .String }}</span>
                 {{- end -}}
               {{- end -}}
             {{- end -}}
