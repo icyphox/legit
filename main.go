@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -20,5 +21,7 @@ func main() {
 	}
 
 	mux := routes.Handlers(c)
-	log.Fatal(http.ListenAndServe(":5555", mux))
+	addr := fmt.Sprintf("%s:%d", c.Server.Host, c.Server.Port)
+	log.Println("starting server on", addr)
+	log.Fatal(http.ListenAndServe(addr, mux))
 }

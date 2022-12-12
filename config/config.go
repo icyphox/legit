@@ -19,6 +19,10 @@ type Config struct {
 		Title       string `yaml:"title"`
 		Description string `yaml:"description"`
 	} `yaml:"meta"`
+	Server struct {
+		Host string `yaml:"host"`
+		Port int `yaml:"port"`
+	} `yaml:"server"`
 }
 
 func Read(f string) (*Config, error) {
