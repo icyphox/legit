@@ -19,10 +19,13 @@
       </p>
       {{ end }}
       {{ if .tags }}
+      <h3>tags</h3>
       {{ range .tags }}
-      <p>{{ .Name }}</p>
+      <strong>{{ .Name }}</strong>
+      <a href="/{{ $name }}/tree/{{ .Name }}/">browse</a>
+      <a href="/{{ $name }}/log/{{ .Name }}">log</a>
       {{ if .Message }}
-      <p>{{ .Message }}</p>
+      <pre>{{ .Message }}</pre>
       {{ end }}
       {{ end }}
       {{ end }}
