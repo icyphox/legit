@@ -9,7 +9,8 @@ import (
 
 type Config struct {
 	Git struct {
-		ScanPath string `yaml:"scanPath"`
+		ScanPath string   `yaml:"scanPath"`
+		Readme   []string `yaml:"readme"`
 	} `yaml:"git"`
 	Template struct {
 		Dir string `yaml:"dir"`

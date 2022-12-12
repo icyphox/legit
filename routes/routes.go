@@ -15,6 +15,10 @@ type deps struct {
 	c *config.Config
 }
 
+func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	name = filepath.Clean(name)
@@ -22,21 +26,34 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
 	gr, err := git.Open(path, "")
 	if err != nil {
-		Write404(w, *d.c)
+		d.Write404(w)
 		return
 	}
 
 	files, err := gr.FileTree("")
 	if err != nil {
-		Write500(w, *d.c)
+		d.Write500(w)
 		log.Println(err)
 		return
+	}
+
+	var readmeContent string
+	for _, readme := range d.c.Git.Readme {
+		readmeContent, _ = gr.FileContent(readme)
+		if readmeContent != "" {
+			break
+		}
+	}
+
+	if readmeContent == "" {
+		log.Printf("no readme found for %s", name)
 	}
 
 	data := make(map[string]any)
 	data["name"] = name
 	// TODO: make this configurable
 	data["ref"] = "master"
+	data["readme"] = readmeContent
 
 	d.listFiles(files, data, w)
 	return
@@ -52,13 +69,13 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
 	gr, err := git.Open(path, ref)
 	if err != nil {
-		Write404(w, *d.c)
+		d.Write404(w)
 		return
 	}
 
 	files, err := gr.FileTree(treePath)
 	if err != nil {
-		Write500(w, *d.c)
+		d.Write500(w)
 		log.Println(err)
 		return
 	}
@@ -82,7 +99,7 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
 	gr, err := git.Open(path, ref)
 	if err != nil {
-		Write404(w, *d.c)
+		d.Write404(w)
 		return
 	}
 
@@ -102,13 +119,13 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
 	gr, err := git.Open(path, ref)
 	if err != nil {
-		Write404(w, *d.c)
+		d.Write404(w)
 		return
 	}
 
 	commits, err := gr.Commits()
 	if err != nil {
-		Write500(w, *d.c)
+		d.Write500(w)
 		log.Println(err)
 		return
 	}
@@ -135,13 +152,13 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Join(d.c.Git.ScanPath, name+".git")
 	gr, err := git.Open(path, ref)
 	if err != nil {
-		Write404(w, *d.c)
+		d.Write404(w)
 		return
 	}
 
 	diff, err := gr.Diff()
 	if err != nil {
-		Write500(w, *d.c)
+		d.Write500(w)
 		log.Println(err)
 		return
 	}

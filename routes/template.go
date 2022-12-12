@@ -6,22 +6,25 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"icyphox.sh/legit/config"
 	"icyphox.sh/legit/git"
 )
 
-func Write404(w http.ResponseWriter, c config.Config) {
+func (d *deps) Write404(w http.ResponseWriter) {
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
 	w.WriteHeader(404)
-	tpath := filepath.Join(c.Template.Dir, "404.html")
-	t := template.Must(template.ParseFiles(tpath))
-	t.Execute(w, nil)
+	if err := t.ExecuteTemplate(w, "404", nil); err != nil {
+		log.Printf("404 template: %s", err)
+	}
 }
 
-func Write500(w http.ResponseWriter, c config.Config) {
+func (d *deps) Write500(w http.ResponseWriter) {
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
 	w.WriteHeader(500)
-	tpath := filepath.Join(c.Template.Dir, "500.html")
-	t := template.Must(template.ParseFiles(tpath))
-	t.Execute(w, nil)
+	if err := t.ExecuteTemplate(w, "500", nil); err != nil {
+		log.Printf("500 template: %s", err)
+	}
 }
 
 func (d *deps) listFiles(files []git.NiceTree, data map[string]any, w http.ResponseWriter) {
