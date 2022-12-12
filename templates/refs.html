@@ -1,0 +1,32 @@
+{{ define "refs" }}
+<html>
+{{ template "head" . }}
+
+  <header>
+    <h1>{{ .meta.Title }}</h1>
+    <h2>{{ .meta.Description }}</h2>
+  </header>
+  <body>
+    {{ template "nav" . }}
+    <main>
+      <h3>branches</h3>
+      {{ $name := .name }}
+      {{ range .branches }}
+      <p>
+      <strong>{{ .Name.Short }}</strong>
+      <a href="/{{ $name }}/tree/{{ .Name.Short }}/">browse</a>
+      <a href="/{{ $name }}/log/{{ .Name.Short }}">log</a>
+      </p>
+      {{ end }}
+      {{ if .tags }}
+      {{ range .tags }}
+      <p>{{ .Name }}</p>
+      {{ if .Message }}
+      <p>{{ .Message }}</p>
+      {{ end }}
+      {{ end }}
+      {{ end }}
+    </main>
+  </body>
+</html>
+{{ end }}

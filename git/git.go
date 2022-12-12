@@ -78,3 +78,35 @@ func (g *GitRepo) FileContent(path string) (string, error) {
 
 	return file.Contents()
 }
+
+func (g *GitRepo) Tags() ([]*object.Tag, error) {
+	ti, err := g.r.TagObjects()
+	if err != nil {
+		return nil, fmt.Errorf("tag objects: %w", err)
+	}
+
+	tags := []*object.Tag{}
+
+	_ = ti.ForEach(func(t *object.Tag) error {
+		tags = append(tags, t)
+		return nil
+	})
+
+	return tags, nil
+}
+
+func (g *GitRepo) Branches() ([]*plumbing.Reference, error) {
+	bi, err := g.r.Branches()
+	if err != nil {
+		return nil, fmt.Errorf("branchs: %w", err)
+	}
+
+	branches := []*plumbing.Reference{}
+
+	_ = bi.ForEach(func(ref *plumbing.Reference) error {
+		branches = append(branches, ref)
+		return nil
+	})
+
+	return branches, nil
+}

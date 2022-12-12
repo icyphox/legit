@@ -216,3 +216,42 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
+	name := flow.Param(r.Context(), "name")
+
+	path := filepath.Join(d.c.Git.ScanPath, name)
+	gr, err := git.Open(path, "")
+	if err != nil {
+		d.Write404(w)
+		return
+	}
+
+	tags, err := gr.Tags()
+	if err != nil {
+		// Non-fatal, we *should* have at least one branch to show.
+		log.Println(err)
+	}
+
+	branches, err := gr.Branches()
+	if err != nil {
+		log.Println(err)
+		d.Write500(w)
+		return
+	}
+
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	data := make(map[string]interface{})
+
+	data["meta"] = d.c.Meta
+	data["name"] = name
+	data["branches"] = branches
+	data["tags"] = tags
+
+	if err := t.ExecuteTemplate(w, "refs", data); err != nil {
+		log.Println(err)
+		return
+	}
+}
