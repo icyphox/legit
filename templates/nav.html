@@ -2,9 +2,13 @@
   <nav>
     <ul>
     <li><a href="/">all repos</a>
+    {{ if .name }}
     <li><a href="/{{ .name }}">{{ .name }}</a>
+    {{ end }}
+    {{ if .ref }}
     <li><a href="/{{ .name }}/tree/{{ .ref }}/">tree</a>
     <li><a href="/{{ .name }}/log/{{ .ref }}">log</a>
+    {{ end }}
     </ul>
   </nav>
 {{ end }}

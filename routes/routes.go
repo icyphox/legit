@@ -4,7 +4,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/alexedwards/flow"
 	"icyphox.sh/legit/config"
@@ -16,14 +18,50 @@ type deps struct {
 }
 
 func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
+	dirs, err := os.ReadDir(d.c.Git.ScanPath)
+	if err != nil {
+		d.Write500(w)
+		log.Printf("reading scan path: %s", err)
+		return
+	}
 
+	repoInfo := make(map[string]time.Time)
+
+	for _, dir := range dirs {
+		path := filepath.Join(d.c.Git.ScanPath, dir.Name())
+		gr, err := git.Open(path, "")
+		if err != nil {
+			d.Write500(w)
+			log.Printf("opening dir %s: %s", path, err)
+			return
+		}
+
+		c, err := gr.LastCommit()
+		if err != nil {
+			d.Write500(w)
+			log.Println(err)
+		}
+
+		repoInfo[dir.Name()] = c.Author.When
+	}
+
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	data := make(map[string]interface{})
+	data["meta"] = d.c.Meta
+	data["info"] = repoInfo
+
+	if err := t.ExecuteTemplate(w, "index", data); err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	name = filepath.Clean(name)
-	// TODO: remove .git
-	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	path := filepath.Join(d.c.Git.ScanPath, name)
 	gr, err := git.Open(path, "")
 	if err != nil {
 		d.Write404(w)
@@ -65,8 +103,7 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	ref := flow.Param(r.Context(), "ref")
 
 	name = filepath.Clean(name)
-	// TODO: remove .git
-	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	path := filepath.Join(d.c.Git.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -95,8 +132,7 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	ref := flow.Param(r.Context(), "ref")
 
 	name = filepath.Clean(name)
-	// TODO: remove .git
-	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	path := filepath.Join(d.c.Git.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -116,7 +152,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	ref := flow.Param(r.Context(), "ref")
 
-	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	path := filepath.Join(d.c.Git.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -149,7 +185,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	ref := flow.Param(r.Context(), "ref")
 
-	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	path := filepath.Join(d.c.Git.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)

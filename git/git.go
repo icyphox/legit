@@ -52,6 +52,14 @@ func (g *GitRepo) Commits() ([]*object.Commit, error) {
 	return commits, nil
 }
 
+func (g *GitRepo) LastCommit() (*object.Commit, error) {
+	c, err := g.r.CommitObject(g.h)
+	if err != nil {
+		return nil, fmt.Errorf("last commit: %w", err)
+	}
+	return c, nil
+}
+
 func (g *GitRepo) FileContent(path string) (string, error) {
 	c, err := g.r.CommitObject(g.h)
 	if err != nil {

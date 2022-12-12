@@ -1,0 +1,27 @@
+{{ define "index" }}
+<html>
+{{ template "head" . }}
+
+  <header>
+    <h1>{{ .meta.Title }}</h1>
+    <h2>{{ .meta.Description }}</h2>
+  </header>
+  <body>
+    {{ template "nav" . }}
+    <main>
+      <table>
+        <tr>
+          <td>repository</td>
+          <td>last active</td>
+        </tr>
+        {{ range $repo, $lc := .info }}
+        <tr>
+          <td><a href="/{{ $repo }}">{{ $repo }}</a></td>
+          <td>{{ $lc }}</td>
+        </tr>
+        {{ end }}
+      </table>
+    </main>
+  </body>
+</html>
+{{ end }}

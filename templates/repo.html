@@ -37,7 +37,7 @@
           {{ if $parent }}
           <a href="/{{ $repo }}/tree/{{ $ref }}/{{ $parent }}/{{ .Name }}">{{ .Name }}/</a>
           {{ else }}
-          <a href="{{ $repo }}/tree/{{ $ref }}/{{ .Name }}">{{ .Name }}/</a>
+          <a href="/{{ $repo }}/tree/{{ $ref }}/{{ .Name }}">{{ .Name }}/</a>
           {{ end }}
           </td>
         </tr>

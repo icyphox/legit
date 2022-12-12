@@ -1,5 +1,5 @@
 git:
-  scanPath: /home/icy/code/tmp
+  scanPath: /home/icy/code/tmp/testrepos
   readme:
     - readme
     - README
