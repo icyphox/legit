@@ -127,3 +127,39 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
+	name := flow.Param(r.Context(), "name")
+	ref := flow.Param(r.Context(), "ref")
+
+	path := filepath.Join(d.c.Git.ScanPath, name+".git")
+	gr, err := git.Open(path, ref)
+	if err != nil {
+		Write404(w, *d.c)
+		return
+	}
+
+	diff, err := gr.Diff()
+	if err != nil {
+		Write500(w, *d.c)
+		log.Println(err)
+		return
+	}
+
+	tpath := filepath.Join(d.c.Template.Dir, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	data := make(map[string]interface{})
+
+	data["commit"] = diff.Commit
+	data["stat"] = diff.Stat
+	data["diff"] = diff.Diff
+	data["meta"] = d.c.Meta
+	data["name"] = name
+	data["ref"] = ref
+
+	if err := t.ExecuteTemplate(w, "commit", data); err != nil {
+		log.Println(err)
+		return
+	}
+}

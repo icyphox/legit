@@ -1,0 +1,52 @@
+{{ define "commit" }}
+<html>
+{{ template "head" . }}
+
+  <header>
+    <h1>{{ .meta.Title }}</h1>
+    <h2>{{ .meta.Description }}</h2>
+  </header>
+  <body>
+    {{ template "nav" . }}
+    <main>
+      <section>
+        <p>author: {{ .commit.Author.Name }} <{{ .commit.Author.Email}}> on {{ .commit.Author.When }}</p>
+        <p>commit: <a href="/{{ .name }}/commit/{{ .commit.This }}">
+          {{ .commit.This }}
+        </a>
+        </p>
+        <p>parent: <a href="/{{ .name }}/commit/{{ .commit.Parent }}">
+          {{ .commit.Parent }}
+        </a>
+        </p>
+        <p>{{ .stat.FilesChanged }} files changed,
+          {{ .stat.Insertions }} insertions(+),
+          {{ .stat.Deletions }} deletions(-)
+        </p>
+      </section>
+      <section>
+        {{ range .diff }}
+          {{ if .Name.Old }}
+          <p>{{ .Name.Old }} → {{ .Name.New }}</p>
+          {{ else }}
+          <p>{{.Name.New }}</p>
+          {{- end -}}
+            <pre>
+            {{- range .TextFragments -}}
+            <p>{{- .Header -}}</p>
+              {{- range .Lines -}}
+                {{- if eq .Op.String "+" -}}
+                <span style="color: green">{{ .String }}</span>
+                {{- end -}}
+                {{- if eq .Op.String "-" -}}
+                <span style="color: red">{{ .String }}</span>
+                {{- end -}}
+              {{- end -}}
+            {{- end -}}
+            </pre>
+        {{ end }}
+      </section>
+    </main>
+  </body>
+</html>
+{{ end }}
