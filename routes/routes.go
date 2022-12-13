@@ -18,7 +18,7 @@ type deps struct {
 }
 
 func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
-	dirs, err := os.ReadDir(d.c.Git.ScanPath)
+	dirs, err := os.ReadDir(d.c.Repo.ScanPath)
 	if err != nil {
 		d.Write500(w)
 		log.Printf("reading scan path: %s", err)
@@ -28,7 +28,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 	repoInfo := make(map[string]time.Time)
 
 	for _, dir := range dirs {
-		path := filepath.Join(d.c.Git.ScanPath, dir.Name())
+		path := filepath.Join(d.c.Repo.ScanPath, dir.Name())
 		gr, err := git.Open(path, "")
 		if err != nil {
 			d.Write500(w)
@@ -61,7 +61,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	name = filepath.Clean(name)
-	path := filepath.Join(d.c.Git.ScanPath, name)
+	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, "")
 	if err != nil {
 		d.Write404(w)
@@ -76,7 +76,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var readmeContent string
-	for _, readme := range d.c.Git.Readme {
+	for _, readme := range d.c.Repo.Readme {
 		readmeContent, _ = gr.FileContent(readme)
 		if readmeContent != "" {
 			break
@@ -87,10 +87,16 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		log.Printf("no readme found for %s", name)
 	}
 
+	mainBranch, err := gr.FindMainBranch(d.c.Repo.MainBranch)
+	if err != nil {
+		d.Write500(w)
+		log.Println(err)
+		return
+	}
+
 	data := make(map[string]any)
 	data["name"] = name
-	// TODO: make this configurable
-	data["ref"] = "master"
+	data["ref"] = mainBranch
 	data["readme"] = readmeContent
 
 	d.listFiles(files, data, w)
@@ -103,7 +109,7 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	ref := flow.Param(r.Context(), "ref")
 
 	name = filepath.Clean(name)
-	path := filepath.Join(d.c.Git.ScanPath, name)
+	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -132,7 +138,7 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	ref := flow.Param(r.Context(), "ref")
 
 	name = filepath.Clean(name)
-	path := filepath.Join(d.c.Git.ScanPath, name)
+	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -152,7 +158,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	ref := flow.Param(r.Context(), "ref")
 
-	path := filepath.Join(d.c.Git.ScanPath, name)
+	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -185,7 +191,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 	ref := flow.Param(r.Context(), "ref")
 
-	path := filepath.Join(d.c.Git.ScanPath, name)
+	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -220,7 +226,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
 
-	path := filepath.Join(d.c.Git.ScanPath, name)
+	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, "")
 	if err != nil {
 		d.Write404(w)

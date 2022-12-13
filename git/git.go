@@ -110,3 +110,13 @@ func (g *GitRepo) Branches() ([]*plumbing.Reference, error) {
 
 	return branches, nil
 }
+
+func (g *GitRepo) FindMainBranch(branches []string) (string, error) {
+	for _, b := range branches {
+		_, err := g.r.ResolveRevision(plumbing.Revision(b))
+		if err == nil {
+			return b, nil
+		}
+	}
+	return "", fmt.Errorf("unable to find main branch")
+}

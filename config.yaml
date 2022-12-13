@@ -1,10 +1,13 @@
-git:
+repo:
   scanPath: /home/icy/code/tmp/testrepos
   readme:
     - readme
     - README
     - readme.md
     - README.md
+  mainBranch:
+    - master
+    - main
 template:
   dir: ./templates
 meta:

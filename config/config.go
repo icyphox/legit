@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Git struct {
-		ScanPath string   `yaml:"scanPath"`
-		Readme   []string `yaml:"readme"`
-	} `yaml:"git"`
+	Repo struct {
+		ScanPath   string   `yaml:"scanPath"`
+		Readme     []string `yaml:"readme"`
+		MainBranch []string `yaml:"mainBranch"`
+	} `yaml:"repo"`
 	Template struct {
 		Dir string `yaml:"dir"`
 	} `yaml:"template"`
@@ -21,7 +22,7 @@ type Config struct {
 	} `yaml:"meta"`
 	Server struct {
 		Host string `yaml:"host"`
-		Port int `yaml:"port"`
+		Port int    `yaml:"port"`
 	} `yaml:"server"`
 }
 
