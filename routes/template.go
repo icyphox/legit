@@ -1,10 +1,13 @@
 package routes
 
 import (
+	"bytes"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"icyphox.sh/legit/git"
 )
@@ -40,12 +43,42 @@ func (d *deps) listFiles(files []git.NiceTree, data map[string]any, w http.Respo
 	}
 }
 
+func countLines(r io.Reader) (int, error) {
+	buf := make([]byte, 32*1024)
+	count := 0
+	nl := []byte{'\n'}
+
+	for {
+		c, err := r.Read(buf)
+		count += bytes.Count(buf[:c], nl)
+
+		switch {
+		case err == io.EOF:
+			return count, nil
+		case err != nil:
+			return 0, err
+		}
+	}
+}
+
 func (d *deps) showFile(content string, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Template.Dir, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
-	// TODO: Process content here.
+	lc, err := countLines(strings.NewReader(content))
+	if err != nil {
+		// Non-fatal, we'll just skip showing line numbers in the template.
+		log.Printf("counting lines: %s", err)
+	}
 
+	lines := make([]int, lc)
+	if lc > 0 {
+		for i := range lines {
+			lines[i] = i + 1
+		}
+	}
+
+	data["linecount"] = lines
 	data["content"] = content
 	data["meta"] = d.c.Meta
 

@@ -9,6 +9,11 @@
   <body>
     {{ template "nav" . }}
     <main>
+    <pre>
+{{ range .linecount }}
+<a id="#L{{ . }}" href="#{{ . }}">{{ . }}</a>
+{{- end -}}
+    </pre>
       <pre>
 {{ .content }}
       </pre>
