@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"regexp"
 
 	"github.com/alexedwards/flow"
 	"github.com/sosedoff/gitkit"
@@ -16,20 +15,24 @@ type depsWrapper struct {
 	gitsvc     *gitkit.Server
 }
 
-// Checks for gitprotocol-http(5) specific query params; if found, passes
+// Checks for gitprotocol-http(5) specific smells; if found, passes
 // the request on to the git http service, else render the web frontend.
 func (dw *depsWrapper) Multiplex(w http.ResponseWriter, r *http.Request) {
 	path := flow.Param(r.Context(), "...")
 	name := flow.Param(r.Context(), "name")
 	name = filepath.Clean(name)
-	gitCommand := regexp.MustCompile(`git-(upload|receive)-pack`)
 
-	if path == "info/refs" && gitCommand.MatchString(r.URL.RawQuery) && r.Method == "GET" {
+	if r.URL.RawQuery == "service=git-receive-pack" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("no pushing allowed!"))
+		return
+	}
+
+	if path == "info/refs" && r.URL.RawQuery == "service=git-upload-pack" && r.Method == "GET" {
 		dw.gitsvc.ServeHTTP(w, r)
-	} else if gitCommand.MatchString(path) && r.Method == "POST" {
+	} else if path == "git-upload-pack" && r.Method == "POST" {
 		dw.gitsvc.ServeHTTP(w, r)
 	} else if r.Method == "GET" {
-		log.Println("index:", r.URL.String())
 		dw.actualDeps.RepoIndex(w, r)
 	}
 }
