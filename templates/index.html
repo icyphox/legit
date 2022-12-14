@@ -12,12 +12,14 @@
       <table>
         <tr>
           <td>repository</td>
+          <td>description</td>
           <td>last active</td>
         </tr>
-        {{ range $repo, $lc := .info }}
+        {{ range .info }}
         <tr>
-          <td><a href="/{{ $repo }}">{{ $repo }}</a></td>
-          <td>{{ $lc }}</td>
+          <td><a href="/{{ .Name }}">{{ .Name }}</a></td>
+          <td>{{ .Desc }}</td>
+          <td>{{ .Idle }}</td>
         </tr>
         {{ end }}
       </table>

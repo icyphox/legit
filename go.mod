@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/alexedwards/flow v0.0.0-20220806114457-cf11be9e0e03
 	github.com/bluekeyes/go-gitdiff v0.7.0
+	github.com/dustin/go-humanize v1.0.0
 	github.com/go-git/go-git/v5 v5.5.1
 	gopkg.in/yaml.v3 v3.0.0
 )

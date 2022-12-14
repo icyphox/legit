@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/alexedwards/flow"
+	"github.com/dustin/go-humanize"
 	"icyphox.sh/legit/config"
 	"icyphox.sh/legit/git"
 )
@@ -25,7 +25,9 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repoInfo := make(map[string]time.Time)
+	type info struct{ Name, Desc, Idle string }
+
+	infos := []info{}
 
 	for _, dir := range dirs {
 		path := filepath.Join(d.c.Repo.ScanPath, dir.Name())
@@ -42,7 +44,19 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 
-		repoInfo[dir.Name()] = c.Author.When
+		var desc string
+		db, err := os.ReadFile(filepath.Join(path, "description"))
+		if err == nil {
+			desc = string(db)
+		} else {
+			desc = ""
+		}
+
+		infos = append(infos, info{
+			Name: dir.Name(),
+			Desc: desc,
+			Idle: humanize.Time(c.Author.When),
+		})
 	}
 
 	tpath := filepath.Join(d.c.Template.Dir, "*")
@@ -50,7 +64,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 	data["meta"] = d.c.Meta
-	data["info"] = repoInfo
+	data["info"] = infos
 
 	if err := t.ExecuteTemplate(w, "index", data); err != nil {
 		log.Println(err)
