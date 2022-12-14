@@ -30,7 +30,7 @@ func (dw *depsWrapper) Multiplex(w http.ResponseWriter, r *http.Request) {
 		dw.gitsvc.ServeHTTP(w, r)
 	} else if r.Method == "GET" {
 		log.Println("index:", r.URL.String())
-		dw.actualDeps.Index(w, r)
+		dw.actualDeps.RepoIndex(w, r)
 	}
 }
 
@@ -54,12 +54,12 @@ func Handlers(c *config.Config) *flow.Mux {
 
 	mux.HandleFunc("/", d.Index, "GET")
 	mux.HandleFunc("/:name", dw.Multiplex, "GET", "POST")
-	mux.HandleFunc("/:name/...", dw.Multiplex, "GET", "POST")
 	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
 	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")
 	mux.HandleFunc("/:name/log/:ref", d.Log, "GET")
 	mux.HandleFunc("/:name/commit/:ref", d.Diff, "GET")
 	mux.HandleFunc("/:name/refs", d.Refs, "GET")
+	mux.HandleFunc("/:name/...", dw.Multiplex, "GET", "POST")
 
 	return mux
 }
