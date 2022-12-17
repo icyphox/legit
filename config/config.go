@@ -13,9 +13,10 @@ type Config struct {
 		Readme     []string `yaml:"readme"`
 		MainBranch []string `yaml:"mainBranch"`
 	} `yaml:"repo"`
-	Template struct {
-		Dir string `yaml:"dir"`
-	} `yaml:"template"`
+	Dirs struct {
+		Templates string `yaml:"templates"`
+		Static    string `yaml:"static"`
+	} `yaml:"dirs"`
 	Meta struct {
 		Title       string `yaml:"title"`
 		Description string `yaml:"description"`

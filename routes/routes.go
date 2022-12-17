@@ -42,6 +42,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			d.Write500(w)
 			log.Println(err)
+			return
 		}
 
 		var desc string
@@ -59,7 +60,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	tpath := filepath.Join(d.c.Template.Dir, "*")
+	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
 	data := make(map[string]interface{})
@@ -186,7 +187,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Template.Dir, "*")
+	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
 	data := make(map[string]interface{})
@@ -219,7 +220,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Template.Dir, "*")
+	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
 	data := make(map[string]interface{})
@@ -260,7 +261,7 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Template.Dir, "*")
+	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
 	data := make(map[string]interface{})
@@ -274,4 +275,11 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+}
+
+func (d *deps) ServeStatic(w http.ResponseWriter, r *http.Request) {
+	f := flow.Param(r.Context(), "file")
+	f = filepath.Clean(filepath.Join(d.c.Dirs.Static, f))
+
+	http.ServeFile(w, r, f)
 }

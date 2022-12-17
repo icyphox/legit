@@ -8,8 +8,9 @@ repo:
   mainBranch:
     - master
     - main
-template:
-  dir: ./templates
+dirs:
+  templates: ./templates
+  static: ./static
 meta:
   title: git good
   description: i think it's a skill issue
