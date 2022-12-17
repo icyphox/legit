@@ -8,12 +8,12 @@
   </header>
   <body>
     <main>
-      <div class="repo-index-headings small-heading">
+      <div class="index-headings small-heading">
         <div>repository</div>
         <div>description</div>
         <div>idle</div>
       </div>
-      <div class="repo-index">
+      <div class="index">
       {{ range .info }}
        <div><a href="/{{ .Name }}">{{ .Name }}</a></div>
        <div>{{ .Desc }}</div>

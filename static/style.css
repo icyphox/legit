@@ -92,13 +92,13 @@ a:hover {
   border-bottom: 1.5px solid var(--gray);
 }
 
-.repo-index {
+.index {
   display: grid;
   grid-template-columns: 6em 1fr 7em;
   grid-row-gap: 0.5em;
 }
 
-.repo-index-headings {
+.index-headings {
   display: grid;
   grid-template-columns: 6em 1fr 7em;
   padding-bottom: 1.2em;
@@ -106,7 +106,7 @@ a:hover {
 }
 
 @media (max-width: 385px) {
-  .repo-index {
+  .index {
     grid-row-gap: 0.8em;
   }
 }
