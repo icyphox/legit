@@ -6,12 +6,16 @@
   --gray: #6a6a6a;
   --dark: #444;
   --darker: #222;
+
+  --sans-font: "InterVar", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  --display-font: "InterDisplay", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  --mono-font: monospace;
 }
 
 html {
   background: var(--light);
   -webkit-text-size-adjust: none;
-  font-family: "InterVar", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  font-family: var(--sans-font);
 }
 
 ::selection {
@@ -38,7 +42,7 @@ main, footer {
 }
 
 main h1, h2, h3, .small-heading {
-  font-family: "InterDisplay", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  font-family: var(--display-font);
   font-weight: 500;
 }
 
@@ -94,19 +98,65 @@ a:hover {
 
 .index {
   display: grid;
-  grid-template-columns: 6em 1fr 7em;
+  grid-template-columns: 6em 1fr minmax(0, 7em);
   grid-row-gap: 0.5em;
+  min-width: 0;
 }
 
 .index-headings {
   display: grid;
-  grid-template-columns: 6em 1fr 7em;
+  grid-template-columns: 6em 1fr minmax(0, 7em);
   padding-bottom: 1.2em;
   padding-top: 1.2em;
+  min-width: 0;
 }
 
-@media (max-width: 385px) {
+.desc {
+  color: var(--gray);
+  font-style: italic;
+}
+
+.tree {
+  display: grid;
+  grid-template-columns: 8em minmax(0, 1fr);
+  grid-row-gap: 0.5em;
+  grid-column-gap: 1em;
+  min-width: 0;
+}
+
+.log {
+  display: grid;
+  grid-template-columns: 20rem minmax(0, 1fr);
+  grid-row-gap: 0.8em;
+  grid-column-gap: 8rem;
+  margin-bottom: 2em;
+  padding-bottom: 1em;
+  border-bottom: 1.5px solid var(--medium-gray);
+}
+
+.log pre {
+  white-space: pre-wrap;
+}
+
+.mode {
+  font-family: var(--mono-font);
+}
+
+.readme pre {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
   .index {
     grid-row-gap: 0.8em;
+  }
+
+  .log {
+    grid-template-columns: 1fr;
+    grid-row-gap: 0em;
+  }
+
+  .commit-info:not(:last-child) {
+    padding-bottom: 1.5rem;
   }
 }

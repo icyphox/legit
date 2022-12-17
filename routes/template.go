@@ -37,7 +37,7 @@ func (d *deps) listFiles(files []git.NiceTree, data map[string]any, w http.Respo
 	data["files"] = files
 	data["meta"] = d.c.Meta
 
-	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
+	if err := t.ExecuteTemplate(w, "tree", data); err != nil {
 		log.Println(err)
 		return
 	}

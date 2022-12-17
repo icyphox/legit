@@ -9,13 +9,17 @@
   <body>
     {{ template "nav" . }}
     <main>
-      {{ $repo := .name }}
-      {{ range .commits }}
-      <p><a href="/{{ $repo }}/commit/{{ .Hash.String }}">{{ slice .Hash.String 0 8 }}<a>
-        &mdash; {{ .Author.Name }}
-        <span title="{{ .Author.When }}">{{ .Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</span></p>
-      <p><pre>{{ .Message }}</pre></p>
-      {{ end }}
+      {{ $repo := .repo }}
+      <div class="log">
+        {{ range .commits }}
+        <div>
+          <div><a href="/{{ $repo }}/commit/{{ .Hash.String }}">{{ slice .Hash.String 0 8 }}</a></div>
+          <div>{{ .Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</div>
+          <pre>{{ .Message }}</pre>
+        </div>
+        <div class="commit-info">{{ .Author.Name }} <span style="color: var(--gray);">{{ .Author.Email }}</span></div>
+        {{ end }}
+      </div>
     </main>
   </body>
 </html>

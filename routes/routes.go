@@ -45,13 +45,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var desc string
-		db, err := os.ReadFile(filepath.Join(path, "description"))
-		if err == nil {
-			desc = string(db)
-		} else {
-			desc = ""
-		}
+		desc := getDescription(path)
 
 		infos = append(infos, info{
 			Name: dir.Name(),
@@ -83,7 +77,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files, err := gr.FileTree("")
+	commits, err := gr.Commits()
 	if err != nil {
 		d.Write500(w)
 		log.Println(err)
@@ -109,12 +103,25 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tpath := filepath.Join(d.c.Dirs.Templates, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	if len(commits) >= 5 {
+		commits = commits[:5]
+	}
+
 	data := make(map[string]any)
 	data["name"] = name
 	data["ref"] = mainBranch
 	data["readme"] = readmeContent
+	data["commits"] = commits
+	data["desc"] = getDescription(path)
 
-	d.listFiles(files, data, w)
+	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
+		log.Println(err)
+		return
+	}
+
 	return
 }
 
@@ -282,4 +289,14 @@ func (d *deps) ServeStatic(w http.ResponseWriter, r *http.Request) {
 	f = filepath.Clean(filepath.Join(d.c.Dirs.Static, f))
 
 	http.ServeFile(w, r, f)
+}
+
+func getDescription(path string) (desc string) {
+	db, err := os.ReadFile(filepath.Join(path, "description"))
+	if err == nil {
+		desc = string(db)
+	} else {
+		desc = ""
+	}
+	return
 }
