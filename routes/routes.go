@@ -188,6 +188,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	}
 
 	commits, err := gr.Commits()
+	log.Println(len(commits))
 	if err != nil {
 		d.Write500(w)
 		log.Println(err)

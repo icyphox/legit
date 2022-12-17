@@ -146,6 +146,44 @@ a:hover {
   white-space: pre-wrap;
 }
 
+.diff {
+  padding-top: 1rem;
+}
+
+.diff pre {
+  overflow: scroll;
+}
+
+.diff-stat {
+  padding: 1rem 0 1rem 0;
+}
+
+.commit-email {
+  color: var(--gray);
+}
+
+.commit pre {
+  padding-bottom: 1rem;
+  white-space: pre-wrap;
+}
+
+.diff-stat ul li {
+  list-style: none;
+  padding-left: 0.5em;
+}
+
+.diff-add {
+  color: green;
+}
+
+.diff-del {
+  color: red;
+}
+
+.diff-noop {
+  color: var(--gray);
+}
+
 @media (max-width: 600px) {
   .index {
     grid-row-gap: 0.8em;

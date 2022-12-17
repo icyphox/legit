@@ -9,8 +9,12 @@
   <body>
     {{ template "nav" . }}
     <main>
-      <section>
-        <p>author: {{ .commit.Author.Name }} <{{ .commit.Author.Email}}> on {{ .commit.Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</p>
+      <section class="commit">
+        <pre>
+          {{- .commit.Message -}}
+        </pre>
+        <p>{{ .commit.Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</p>
+        <p>{{ .commit.Author.Name }} <span class="commit-email">{{ .commit.Author.Email}}</span></p>
         <p>commit: <a href="/{{ .name }}/commit/{{ .commit.This }}">
           {{ .commit.This }}
         </a>
@@ -19,34 +23,54 @@
           {{ .commit.Parent }}
         </a>
         </p>
-        <p>{{ .stat.FilesChanged }} files changed,
+        <div class="diff-stat">
+          <div>
+          {{ .stat.FilesChanged }} files changed,
           {{ .stat.Insertions }} insertions(+),
           {{ .stat.Deletions }} deletions(-)
-        </p>
+          </div>
+          <div>
+            <br>
+            <p>jump to:</p>
+            {{ range .diff }}
+            <ul>
+            <li><a href="#{{ .Name.New }}">{{ .Name.New }}</a></li>
+            </ul>
+            {{ end }}
+          </div>
+        </div>
       </section>
       <section>
+        {{ $repo := .name }}
+        {{ $this := .commit.This }}
         {{ range .diff }}
+          <div class="diff">
+          <div id="{{ .Name.New }}">
           {{ if .Name.Old }}
-          <p>{{ .Name.Old }} → {{ .Name.New }}</p>
+          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.Old }}">{{ .Name.Old }}</a> &#8594; 
+          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
           {{ else }}
-          <p>{{.Name.New }}</p>
+          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
           {{- end -}}
+          </div>
+
             <pre>
             {{- range .TextFragments -}}
             <p>{{- .Header -}}</p>
-              {{- range .Lines -}}
-                {{- if eq .Op.String "+" -}}
-                <span style="color: green">{{ .String }}</span>
-                {{- end -}}
-                {{- if eq .Op.String "-" -}}
-                <span style="color: red">{{ .String }}</span>
-                {{- end -}}
-                {{- if eq .Op.String " " -}}
-                <span style="color: gray">{{ .String }}</span>
-                {{- end -}}
+            {{- range .Lines -}}
+              {{- if eq .Op.String "+" -}}
+              <span class="diff-add">{{ .String }}</span>
+              {{- end -}}
+              {{- if eq .Op.String "-" -}}
+              <span class="diff-del">{{ .String }}</span>
+              {{- end -}}
+              {{- if eq .Op.String " " -}}
+              <span class="diff-noop">{{ .String }}</span>
               {{- end -}}
             {{- end -}}
+            {{- end -}}
             </pre>
+          </div>
         {{ end }}
       </section>
     </main>

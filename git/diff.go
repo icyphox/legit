@@ -69,9 +69,9 @@ func (g *GitRepo) Diff() (*NiceDiff, error) {
 	nd.Commit.Parent = parent.Hash.String()
 	nd.Commit.Author = c.Author
 	nd.Commit.Message = c.Message
-	ndiff := Diff{}
 
 	for _, d := range diffs {
+		ndiff := Diff{}
 		ndiff.Name.New = d.NewName
 		ndiff.Name.Old = d.OldName
 
