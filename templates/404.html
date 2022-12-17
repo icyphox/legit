@@ -3,7 +3,11 @@
   <title>404</title>
 {{ template "head" . }}
   <body>
-    404 &mdash; nothing like that here
+    {{ template "nav" . }}
+    <main>
+      <h3>404 &mdash; nothing like that here.</h3>
+    </main>
   </body>
+
 </html>
 {{ end }}

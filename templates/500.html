@@ -3,7 +3,11 @@
   <title>500</title>
 {{ template "head" . }}
   <body>
-    500 &mdash; something broke!
+    {{ template "nav" . }}
+    <main>
+      <h3>500 &mdash; something broke!</h3>
+    </main>
   </body>
+
 </html>
 {{ end }}

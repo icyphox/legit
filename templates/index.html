@@ -7,22 +7,19 @@
     <h2>{{ .meta.Description }}</h2>
   </header>
   <body>
-    {{ template "nav" . }}
     <main>
-      <table>
-        <tr>
-          <td>repository</td>
-          <td>description</td>
-          <td>last active</td>
-        </tr>
-        {{ range .info }}
-        <tr>
-          <td><a href="/{{ .Name }}">{{ .Name }}</a></td>
-          <td>{{ .Desc }}</td>
-          <td>{{ .Idle }}</td>
-        </tr>
-        {{ end }}
-      </table>
+      <div class="repo-index-headings small-heading">
+        <div>repository</div>
+        <div>description</div>
+        <div>idle</div>
+      </div>
+      <div class="repo-index">
+      {{ range .info }}
+       <div><a href="/{{ .Name }}">{{ .Name }}</a></div>
+       <div>{{ .Desc }}</div>
+       <div>{{ .Idle }}</div>
+      {{ end }}
+      </div>
     </main>
   </body>
 </html>

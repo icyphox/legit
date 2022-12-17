@@ -4,12 +4,12 @@
     <li><a href="/">all repos</a>
     {{ if .name }}
     <li><a href="/{{ .name }}">{{ .name }}</a>
-    {{ end }}
-    {{ if .ref }}
-    <li><a href="/{{ .name }}/tree/{{ .ref }}/">tree</a>
-    <li><a href="/{{ .name }}/log/{{ .ref }}">log</a>
-    {{ end }}
     <li><a href="/{{ .name }}/refs">refs</a>
+      {{ if .ref }}
+      <li><a href="/{{ .name }}/tree/{{ .ref }}/">tree</a>
+      <li><a href="/{{ .name }}/log/{{ .ref }}">log</a>
+      {{ end }}
+    {{ end }}
     </ul>
   </nav>
 {{ end }}
