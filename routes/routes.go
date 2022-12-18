@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
+	"time"
 
 	"github.com/alexedwards/flow"
 	"github.com/dustin/go-humanize"
@@ -25,7 +27,10 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type info struct{ Name, Desc, Idle string }
+	type info struct {
+		Name, Desc, Idle string
+		d                time.Time
+	}
 
 	infos := []info{}
 
@@ -51,8 +56,13 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			Name: dir.Name(),
 			Desc: desc,
 			Idle: humanize.Time(c.Author.When),
+			d:    c.Author.When,
 		})
 	}
+
+	sort.Slice(infos, func(i, j int) bool {
+		return infos[j].d.Before(infos[i].d)
+	})
 
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
