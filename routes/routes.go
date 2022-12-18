@@ -173,6 +173,7 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
+	data["path"] = treePath
 
 	d.showFile(contents, data, w)
 	return
