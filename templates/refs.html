@@ -29,12 +29,12 @@
       {{ range .tags }}
       <div>
       <strong>{{ .Name }}</strong>
+      {{ if .Message }}
+      <pre>{{ .Message }}</pre>
       </div>
       <div>
       <a href="/{{ $name }}/tree/{{ .Name }}/">browse</a>
       <a href="/{{ $name }}/log/{{ .Name }}">log</a>
-      {{ if .Message }}
-      <pre>{{ .Message }}</pre>
       </div>
       {{ end }}
       {{ end }}
