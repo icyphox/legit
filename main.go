@@ -20,6 +20,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// for path := range []string{c.Dirs.Static, c.Repo.ScanPath, c.Dirs.Templates} {
+	// 	Unveil(path, "r")
+	// }
+
 	mux := routes.Handlers(c)
 	addr := fmt.Sprintf("%s:%d", c.Server.Host, c.Server.Port)
 	log.Println("starting server on", addr)
