@@ -172,6 +172,10 @@ a:hover {
   content: '>';
 }
 
+.commit {
+  margin-bottom: 1rem;
+}
+
 .commit pre {
   padding-bottom: 1rem;
   white-space: pre-wrap;
@@ -222,6 +226,11 @@ a:hover {
   flex-direction: row;
   grid-template-columns: 1rem minmax(0, 1fr);
   gap: 1rem;
+}
+
+.commit-info {
+  color: var(--gray);
+  font-size: 14px;
 }
 
 @media (max-width: 600px) {
