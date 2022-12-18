@@ -147,7 +147,9 @@ a:hover {
 }
 
 .diff {
-  padding-top: 1rem;
+  margin: 1rem 0 1rem 0;
+  padding: 1rem 0 1rem 0;
+  border-bottom: 1.5px solid var(--medium-gray);
 }
 
 .diff pre {
@@ -160,6 +162,14 @@ a:hover {
 
 .commit-email {
   color: var(--gray);
+}
+
+.commit-email:before {
+  content: '<';
+}
+
+.commit-email:after {
+  content: '>';
 }
 
 .commit pre {
@@ -182,6 +192,31 @@ a:hover {
 
 .diff-noop {
   color: var(--gray);
+}
+
+.ref {
+  font-family: var(--display-font);
+  font-size: 14px;
+  color: var(--gray);
+  display: inline-block;
+  padding-top: 0.7em;
+}
+
+.refs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+.line-numbers {
+  white-space: pre-line;
+}
+
+.file-wrapper {
+  display: flex;
+  flex-direction: row;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 1rem;
 }
 
 @media (max-width: 600px) {

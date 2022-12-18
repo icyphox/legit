@@ -106,8 +106,8 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
-	if len(commits) >= 5 {
-		commits = commits[:5]
+	if len(commits) >= 3 {
+		commits = commits[:3]
 	}
 
 	data := make(map[string]any)
@@ -149,6 +149,7 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = ref
 	data["parent"] = treePath
+	data["desc"] = getDescription(path)
 
 	d.listFiles(files, data, w)
 	return
@@ -171,6 +172,7 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]any)
 	data["name"] = name
 	data["ref"] = ref
+	data["desc"] = getDescription(path)
 
 	d.showFile(contents, data, w)
 	return
@@ -188,7 +190,6 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	}
 
 	commits, err := gr.Commits()
-	log.Println(len(commits))
 	if err != nil {
 		d.Write500(w)
 		log.Println(err)
@@ -203,6 +204,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	data["meta"] = d.c.Meta
 	data["name"] = name
 	data["ref"] = ref
+	data["desc"] = getDescription(path)
 
 	if err := t.ExecuteTemplate(w, "log", data); err != nil {
 		log.Println(err)
@@ -239,6 +241,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	data["meta"] = d.c.Meta
 	data["name"] = name
 	data["ref"] = ref
+	data["desc"] = getDescription(path)
 
 	if err := t.ExecuteTemplate(w, "commit", data); err != nil {
 		log.Println(err)
@@ -278,6 +281,7 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["branches"] = branches
 	data["tags"] = tags
+	data["desc"] = getDescription(path)
 
 	if err := t.ExecuteTemplate(w, "refs", data); err != nil {
 		log.Println(err)

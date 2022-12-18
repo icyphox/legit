@@ -44,19 +44,28 @@ func (g *GitRepo) Diff() (*NiceDiff, error) {
 		return nil, fmt.Errorf("commit object: %w", err)
 	}
 
-	var parent *object.Commit
-	if len(c.ParentHashes) > 0 {
-		parent, err = c.Parent(0)
-		if err != nil {
-			return nil, fmt.Errorf("getting parent: %w", err)
+	patch := &object.Patch{}
+	commitTree, err := c.Tree()
+	parent := &object.Commit{}
+	if err == nil {
+		parentTree := &object.Tree{}
+		if c.NumParents() != 0 {
+			parent, err = c.Parents().Next()
+			if err == nil {
+				parentTree, err = parent.Tree()
+				if err == nil {
+					patch, err = parentTree.Patch(commitTree)
+					if err != nil {
+						return nil, fmt.Errorf("patch: %w", err)
+					}
+				}
+			}
+		} else {
+			patch, err = parentTree.Patch(commitTree)
+			if err != nil {
+				return nil, fmt.Errorf("patch: %w", err)
+			}
 		}
-	} else {
-		parent = c
-	}
-
-	patch, err := parent.Patch(c)
-	if err != nil {
-		return nil, fmt.Errorf("patch: %w", err)
 	}
 
 	diffs, _, err := gitdiff.Parse(strings.NewReader(patch.String()))
@@ -66,7 +75,12 @@ func (g *GitRepo) Diff() (*NiceDiff, error) {
 
 	nd := NiceDiff{}
 	nd.Commit.This = c.Hash.String()
-	nd.Commit.Parent = parent.Hash.String()
+
+	if parent.Hash.IsZero() {
+		nd.Commit.Parent = ""
+	} else {
+		nd.Commit.Parent = parent.Hash.String()
+	}
 	nd.Commit.Author = c.Author
 	nd.Commit.Message = c.Message
 
