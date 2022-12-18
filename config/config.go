@@ -23,7 +23,7 @@ type Config struct {
 	} `yaml:"meta"`
 	Misc struct {
 		GoImport struct {
-			PrettyURL string `yaml:"string"`
+			PrettyURL string `yaml:"prettyURL"`
 		} `yaml:"goImport"`
 	} `yaml:"misc"`
 	Server struct {

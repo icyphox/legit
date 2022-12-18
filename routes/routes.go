@@ -114,13 +114,16 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cloneURL := fmt.Sprintf("https://%s/%s", d.c.Server.FQDN, name)
+	prettyURL := d.c.Misc.GoImport.PrettyURL
 
-	if d.c.Misc.GoImport.PrettyURL == "" {
-		d.c.Misc.GoImport.PrettyURL = cloneURL
+	if prettyURL == "" {
+		prettyURL = cloneURL
+	} else {
+		prettyURL = filepath.Join(prettyURL, name)
 	}
 
 	goImport := fmt.Sprintf(`<meta name="go-import" content="%s git %s">`,
-		d.c.Misc.GoImport.PrettyURL, cloneURL)
+		prettyURL, cloneURL)
 
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
