@@ -9,7 +9,7 @@
 
   --sans-font: "InterVar", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
   --display-font: "InterDisplay", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
-  --mono-font: monospace;
+  --mono-font: "SF Mono", "Roboto Mono", monospace;
 }
 
 html {
@@ -64,7 +64,7 @@ main h2, h3 {
 }
 
 nav {
-  padding-top: 1rem;
+  padding: 0.4rem 0 1.5rem 0;
 }
 
 nav ul {
