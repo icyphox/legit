@@ -25,12 +25,20 @@
         </div>
         {{ end }}
       </div>
-
+{{- if .readme }}
       <article class="readme">
         <pre>
-          {{- if .readme }}{{ .readme }}{{- end -}}
+          {{- .readme -}}
         </pre>
       </article>
+{{- end -}}
+
+      <div class="clone-url">
+      <strong>clone</strong>
+        <pre>
+git clone {{ .clone -}}
+        </pre>
+      </div>
     </main>
   </body>
 </html>

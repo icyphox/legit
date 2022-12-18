@@ -14,6 +14,10 @@ dirs:
 meta:
   title: git good
   description: i think it's a skill issue
+misc:
+  goImport:
+    prettyURL: icyphox.sh
 server:
+  fqdn: git.icyphox.sh
   host: 127.0.0.1
   port: 5555

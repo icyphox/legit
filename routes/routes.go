@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -112,6 +113,15 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cloneURL := fmt.Sprintf("https://%s/%s", d.c.Server.FQDN, name)
+
+	if d.c.Misc.GoImport.PrettyURL == "" {
+		d.c.Misc.GoImport.PrettyURL = cloneURL
+	}
+
+	goImport := fmt.Sprintf(`<meta name="go-import" content="%s git %s">`,
+		d.c.Misc.GoImport.PrettyURL, cloneURL)
+
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
@@ -125,6 +135,8 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	data["readme"] = readmeContent
 	data["commits"] = commits
 	data["desc"] = getDescription(path)
+	data["clone"] = cloneURL
+	data["goimport"] = template.HTML(goImport)
 
 	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
 		log.Println(err)

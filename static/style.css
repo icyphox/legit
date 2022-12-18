@@ -111,6 +111,14 @@ a:hover {
   min-width: 0;
 }
 
+.clone-url {
+  padding-top: 2rem;
+}
+
+.clone-url pre {
+  color: var(--dark);
+}
+
 .desc {
   color: var(--gray);
   font-style: italic;
@@ -146,6 +154,11 @@ a:hover {
   white-space: pre-wrap;
 }
 
+.readme {
+  padding-bottom: 2rem;
+  border-bottom: 1.5px solid var(--medium-gray);
+}
+
 .diff {
   margin: 1rem 0 1rem 0;
   padding: 1rem 0 1rem 0;
@@ -158,10 +171,6 @@ a:hover {
 
 .diff-stat {
   padding: 1rem 0 1rem 0;
-}
-
-.commit-email {
-  color: var(--gray);
 }
 
 .commit-email:before {
@@ -230,7 +239,7 @@ a:hover {
 
 .commit-info {
   color: var(--gray);
-  font-size: 14px;
+  padding-bottom: 1.5rem;
 }
 
 @media (max-width: 600px) {
