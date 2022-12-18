@@ -2,21 +2,22 @@
 <html>
 {{ template "head" . }}
 
-  <header>
-    <h1>{{ .meta.Title }}</h1>
-    <h2>{{ .meta.Description }}</h2>
-  </header>
+  {{ template "repoheader" . }}
   <body>
     {{ template "nav" . }}
     <main>
-    <pre>
-{{ range .linecount }}
-<a id="#L{{ . }}" href="#{{ . }}">{{ . }}</a>
-{{- end -}}
-    </pre>
-      <pre>
-{{ .content }}
-      </pre>
+      <div class="file-wrapper">
+        <div class="line-numbers">
+          {{- range .linecount }}
+<a id="L{{ . }}" href="#L{{ . }}">{{ . }}</a>
+          {{- end -}}
+        </div>
+        <div>
+          <span></span>
+          <pre>
+            {{- .content -}}
+          </pre>
+        </div>
     </main>
   </body>
 </html>

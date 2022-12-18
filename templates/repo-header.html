@@ -1,0 +1,12 @@
+{{ define "repoheader" }}
+<header>
+  <h2> 
+  <a href="/">all repos</a>
+   &mdash; {{ .name }}
+    {{ if .ref }}
+    <span class="ref">@ {{ .ref }}</span>
+    {{ end }}
+  </h2>
+  <h3 class="desc">{{ .desc }}</h3>
+</header>
+{{ end }}

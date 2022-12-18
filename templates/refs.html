@@ -2,32 +2,39 @@
 <html>
 {{ template "head" . }}
 
-  <header>
-    <h1>{{ .meta.Title }}</h1>
-    <h2>{{ .meta.Description }}</h2>
-  </header>
+  {{ template "repoheader" . }}
   <body>
     {{ template "nav" . }}
     <main>
-      <h3>branches</h3>
       {{ $name := .name }}
+      <h3>branches</h3>
+      <div class="refs">
       {{ range .branches }}
-      <p>
-      <strong>{{ .Name.Short }}</strong>
-      <a href="/{{ $name }}/tree/{{ .Name.Short }}/">browse</a>
-      <a href="/{{ $name }}/log/{{ .Name.Short }}">log</a>
-      </p>
+        <div>
+        <strong>{{ .Name.Short }}</strong>
+        </div>
+        <div>
+        <a href="/{{ $name }}/tree/{{ .Name.Short }}/">browse</a>
+        <a href="/{{ $name }}/log/{{ .Name.Short }}">log</a>
+        </div>
       {{ end }}
+      </div>
       {{ if .tags }}
       <h3>tags</h3>
+      <div class="refs">
       {{ range .tags }}
+      <div>
       <strong>{{ .Name }}</strong>
+      </div>
+      <div>
       <a href="/{{ $name }}/tree/{{ .Name }}/">browse</a>
       <a href="/{{ $name }}/log/{{ .Name }}">log</a>
       {{ if .Message }}
       <pre>{{ .Message }}</pre>
+      </div>
       {{ end }}
       {{ end }}
+      </div>
       {{ end }}
     </main>
   </body>

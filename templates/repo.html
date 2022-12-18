@@ -7,13 +7,8 @@
   </title>
 {{ template "head" . }}
 
-  <header>
-    <h2> 
-    <a href="/">all repos</a>
-     &mdash; {{ .name }}
-    </h2>
-    <h3 class="desc">{{ .desc }}</h3>
-  </header>
+{{ template "repoheader" . }}
+
   <body>
     {{ template "nav" . }}
     <main>

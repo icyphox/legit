@@ -2,10 +2,7 @@
 <html>
 {{ template "head" . }}
 
-  <header>
-    <h1>{{ .meta.Title }}</h1>
-    <h2>{{ .meta.Description }}</h2>
-  </header>
+  {{ template "repoheader" . }}
   <body>
     {{ template "nav" . }}
     <main>

@@ -2,10 +2,7 @@
 <html>
 {{ template "head" . }}
 
-  <header>
-    <h1>{{ .meta.Title }}</h1>
-    <h2>{{ .meta.Description }}</h2>
-  </header>
+  {{ template "repoheader" . }}
   <body>
     {{ template "nav" . }}
     <main>
@@ -19,9 +16,11 @@
           {{ .commit.This }}
         </a>
         </p>
+        {{ if .commit.Parent }}
         <p>parent: <a href="/{{ .name }}/commit/{{ .commit.Parent }}">
           {{ .commit.Parent }}
         </a>
+        {{ end }}
         </p>
         <div class="diff-stat">
           <div>
