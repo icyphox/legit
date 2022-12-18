@@ -41,7 +41,7 @@ main, footer {
   line-height: 160%;
 }
 
-main h1, h2, h3, .small-heading {
+main h1, h2, h3, strong {
   font-family: var(--display-font);
   font-weight: 500;
 }
@@ -97,17 +97,10 @@ a:hover {
 }
 
 .index {
+  padding-top: 2em;
   display: grid;
   grid-template-columns: 6em 1fr minmax(0, 7em);
   grid-row-gap: 0.5em;
-  min-width: 0;
-}
-
-.index-headings {
-  display: grid;
-  grid-template-columns: 6em 1fr minmax(0, 7em);
-  padding-bottom: 1.2em;
-  padding-top: 1.2em;
   min-width: 0;
 }
 
@@ -117,6 +110,7 @@ a:hover {
 
 .clone-url pre {
   color: var(--dark);
+  white-space: pre-wrap;
 }
 
 .desc {
@@ -250,6 +244,15 @@ a:hover {
   .log {
     grid-template-columns: 1fr;
     grid-row-gap: 0em;
+  }
+
+  .index {
+    grid-template-columns: 1fr;
+    grid-row-gap: 0em;
+  }
+
+  .index-name:not(:first-child) {
+    padding-top: 1.5rem;
   }
 
   .commit-info:not(:last-child) {
