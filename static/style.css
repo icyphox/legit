@@ -234,6 +234,7 @@ a:hover {
 .commit-info {
   color: var(--gray);
   padding-bottom: 1.5rem;
+  font-size: 0.75rem;
 }
 
 @media (max-width: 600px) {
