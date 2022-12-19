@@ -229,9 +229,13 @@ a:hover {
   flex-direction: row;
   grid-template-columns: 1rem minmax(0, 1fr);
   gap: 1rem;
-  overflow: scroll;
   padding: 0.5rem;
   background: var(--light-gray);
+}
+
+.file-content {
+  background: var(--light-gray);
+  overflow: scroll;
 }
 
 .commit-info {
