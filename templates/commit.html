@@ -66,7 +66,6 @@
           {{ else }}
           <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
           {{- end -}}
-          </div>
           {{ if .IsBinary }}
           <p>Not showing binary file.</p>
           {{ else }}
@@ -87,6 +86,7 @@
             {{- end -}}
           {{- end -}}
             </pre>
+          </div>
           </div>
         {{ end }}
       </section>
