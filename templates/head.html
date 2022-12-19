@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdn.icyphox.sh/fonts/inter.css" type="text/css">
-    {{ if .goimport }}
-    {{ .goimport }}
+    {{ if .servername }}
+    <meta name="go-import" content="{{ .servername}}/{{ .name }} git https://{{ .servername }}/{{ .name }}">
     {{ end }}
     <!-- other meta tags here -->
   </head>

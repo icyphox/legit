@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"git.icyphox.sh/legit/config"
 	"github.com/alexedwards/flow"
 	"github.com/sosedoff/gitkit"
-	"icyphox.sh/legit/config"
 )
 
 type depsWrapper struct {

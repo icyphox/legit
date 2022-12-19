@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,10 +9,10 @@ import (
 	"sort"
 	"time"
 
+	"git.icyphox.sh/legit/config"
+	"git.icyphox.sh/legit/git"
 	"github.com/alexedwards/flow"
 	"github.com/dustin/go-humanize"
-	"icyphox.sh/legit/config"
-	"icyphox.sh/legit/git"
 )
 
 type deps struct {
@@ -113,18 +112,6 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cloneURL := fmt.Sprintf("https://%s/%s", d.c.Server.FQDN, name)
-	prettyURL := d.c.Misc.GoImport.PrettyURL
-
-	if prettyURL == "" {
-		prettyURL = cloneURL
-	} else {
-		prettyURL = filepath.Join(prettyURL, name)
-	}
-
-	goImport := fmt.Sprintf(`<meta name="go-import" content="%s git %s">`,
-		prettyURL, cloneURL)
-
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
 
@@ -138,8 +125,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	data["readme"] = readmeContent
 	data["commits"] = commits
 	data["desc"] = getDescription(path)
-	data["clone"] = cloneURL
-	data["goimport"] = template.HTML(goImport)
+	data["servername"] = d.c.Server.Name
 
 	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
 		log.Println(err)

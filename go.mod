@@ -1,4 +1,4 @@
-module icyphox.sh/legit
+module git.icyphox.sh/legit
 
 go 1.19
 

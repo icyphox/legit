@@ -21,13 +21,8 @@ type Config struct {
 		Title       string `yaml:"title"`
 		Description string `yaml:"description"`
 	} `yaml:"meta"`
-	Misc struct {
-		GoImport struct {
-			PrettyURL string `yaml:"prettyURL"`
-		} `yaml:"goImport"`
-	} `yaml:"misc"`
 	Server struct {
-		FQDN string `yaml:"fqdn,omitempty"`
+		Name string `yaml:"fqdn,omitempty"`
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"server"`

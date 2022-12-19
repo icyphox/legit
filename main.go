@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"icyphox.sh/legit/config"
-	"icyphox.sh/legit/routes"
+	"git.icyphox.sh/legit/config"
+	"git.icyphox.sh/legit/routes"
 )
 
 func main() {
