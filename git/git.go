@@ -76,7 +76,13 @@ func (g *GitRepo) FileContent(path string) (string, error) {
 		return "", err
 	}
 
-	return file.Contents()
+	isbin, _ := file.IsBinary()
+
+	if !isbin {
+		return file.Contents()
+	} else {
+		return "Not displaying binary file", nil
+	}
 }
 
 func (g *GitRepo) Tags() ([]*object.Tag, error) {
