@@ -1,6 +1,8 @@
 //go:build openbsd
 // +build openbsd
 
+// Doesn't do anything yet.
+
 package main
 
 /*
