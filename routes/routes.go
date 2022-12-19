@@ -38,7 +38,6 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Join(d.c.Repo.ScanPath, dir.Name())
 		gr, err := git.Open(path, "")
 		if err != nil {
-			log.Println(err)
 			continue
 		}
 
