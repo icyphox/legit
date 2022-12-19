@@ -238,6 +238,10 @@ a:hover {
   overflow: scroll;
 }
 
+.diff-type {
+  color: var(--gray);
+}
+
 .commit-info {
   color: var(--gray);
   padding-bottom: 1.5rem;

@@ -21,6 +21,8 @@ type Diff struct {
 	}
 	TextFragments []TextFragment
 	IsBinary      bool
+	IsNew         bool
+	IsDelete      bool
 }
 
 // A nicer git diff representation.
@@ -90,6 +92,8 @@ func (g *GitRepo) Diff() (*NiceDiff, error) {
 		ndiff.Name.New = d.NewName
 		ndiff.Name.Old = d.OldName
 		ndiff.IsBinary = d.IsBinary
+		ndiff.IsNew = d.IsNew
+		ndiff.IsDelete = d.IsDelete
 
 		for _, tf := range d.TextFragments {
 			ndiff.TextFragments = append(ndiff.TextFragments, TextFragment{

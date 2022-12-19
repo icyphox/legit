@@ -46,8 +46,17 @@
         {{ $repo := .name }}
         {{ $this := .commit.This }}
         {{ range .diff }}
-          <div class="diff">
           <div id="{{ .Name.New }}">
+            <div class="diff">
+            {{ if .IsNew }}
+            <span class="diff-type">A</span>
+            {{ end }}
+            {{ if .IsDelete }}
+            <span class="diff-type">D</span>
+            {{ end }}
+            {{ if not (or .IsNew .IsDelete) }}
+            <span class="diff-type">M</span>
+            {{ end }}
           {{ if .Name.Old }}
           <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.Old }}">{{ .Name.Old }}</a>
           {{ if .Name.New }}
