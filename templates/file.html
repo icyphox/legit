@@ -7,6 +7,7 @@
   <body>
     {{ template "nav" . }}
     <main>
+      <p>{{ .path }}</p>
       <div class="file-wrapper">
         <div class="line-numbers">
           {{- range .linecount }}

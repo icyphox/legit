@@ -49,8 +49,11 @@
           <div class="diff">
           <div id="{{ .Name.New }}">
           {{ if .Name.Old }}
-          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.Old }}">{{ .Name.Old }}</a> &#8594; 
-          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
+          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.Old }}">{{ .Name.Old }}</a>
+          {{ if .Name.New }}
+            &#8594; 
+            <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
+          {{ end }}
           {{ else }}
           <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
           {{- end -}}
