@@ -22,7 +22,7 @@ type Config struct {
 		Description string `yaml:"description"`
 	} `yaml:"meta"`
 	Server struct {
-		Name string `yaml:"fqdn,omitempty"`
+		Name string `yaml:"name,omitempty"`
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"server"`
