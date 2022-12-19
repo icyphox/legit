@@ -68,3 +68,8 @@ NOTES
 • Pushing over https, while supported, is disabled because auth is a
   pain. Use ssh.
 • "Private" repos only available over Tailscale is planned.
+
+
+LICENSE
+
+legit is licensed under MIT.
