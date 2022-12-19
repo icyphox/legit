@@ -229,6 +229,7 @@ a:hover {
   flex-direction: row;
   grid-template-columns: 1rem minmax(0, 1fr);
   gap: 1rem;
+  overflow: scroll;
 }
 
 .commit-info {
