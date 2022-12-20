@@ -235,7 +235,8 @@ a:hover {
 
 .file-content {
   background: var(--light-gray);
-  overflow: scroll;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
 
 .diff-type {
