@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	"git.icyphox.sh/legit/config"
@@ -95,13 +96,57 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	var readmeContent string
 	for _, readme := range d.c.Repo.Readme {
 		readmeContent, _ = gr.FileContent(readme)
-		if readmeContent != "" {
+		if len(readmeContent) > 0 {
 			break
 		}
 	}
 
-	if readmeContent == "" {
+	if len(readmeContent) <= 0 {
 		log.Printf("no readme found for %s", name)
+	}
+
+	var (
+		licenseContent string
+		licenseType    = "None"
+	)
+	for _, license := range d.c.Repo.License {
+		licenseContent, _ = gr.FileContent(license)
+		if len(licenseContent) > 0 {
+			var firstLine string
+			for i, c := range licenseContent {
+				if c == '\n' {
+					firstLine = strings.ToLower(strings.TrimSpace(licenseContent[:i]))
+					break
+				}
+			}
+
+			switch {
+			case strings.Contains(firstLine, "mit"):
+				licenseType = "MIT"
+			case strings.Contains(firstLine, "public domain"):
+				licenseType = "Public Domain"
+			case strings.Contains(firstLine, "apache license"):
+				licenseType = "Apache"
+			case strings.Contains(firstLine, "gnu general public license"):
+				licenseType = "GNU GPLv3"
+			case strings.Contains(firstLine, "gnu affero general public license"):
+				licenseType = "GNU AGPLv3"
+			case strings.Contains(firstLine, "gnu lesser general public license"):
+				licenseType = "GNU LGPLv3"
+			case strings.Contains(firstLine, "mozilla public license"):
+				licenseType = "Mozilla Public License"
+			case strings.Contains(firstLine, "boost software license"):
+				licenseType = "Boost Software License"
+			default:
+				log.Printf("unknown license %q for %s", firstLine, name)
+			}
+
+			break
+		}
+	}
+
+	if len(licenseContent) <= 0 {
+		log.Printf("no license found for %s", name)
 	}
 
 	mainBranch, err := gr.FindMainBranch(d.c.Repo.MainBranch)
@@ -122,6 +167,8 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = mainBranch
 	data["readme"] = readmeContent
+	data["license"] = licenseContent
+	data["licensetype"] = licenseType
 	data["commits"] = commits
 	data["desc"] = getDescription(path)
 	data["servername"] = d.c.Server.Name
