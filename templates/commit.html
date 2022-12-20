@@ -45,6 +45,7 @@
       <section>
         {{ $repo := .name }}
         {{ $this := .commit.This }}
+        {{ $parent := .commit.Parent }}
         {{ range .diff }}
           <div id="{{ .Name.New }}">
             <div class="diff">
@@ -58,7 +59,7 @@
             <span class="diff-type">M</span>
             {{ end }}
           {{ if .Name.Old }}
-          <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.Old }}">{{ .Name.Old }}</a>
+          <a href="/{{ $repo }}/blob/{{ $parent }}/{{ .Name.Old }}">{{ .Name.Old }}</a>
           {{ if .Name.New }}
             &#8594; 
             <a href="/{{ $repo }}/blob/{{ $this }}/{{ .Name.New }}">{{ .Name.New }}</a>
