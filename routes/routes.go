@@ -107,7 +107,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		licenseContent string
-		licenseType    = "None"
+		licenseType    = "Unknown"
 	)
 	for _, license := range d.c.Repo.License {
 		licenseContent, _ = gr.FileContent(license)
@@ -120,6 +120,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			// @Todo: This should probably be more robust but works for now
 			switch {
 			case strings.Contains(firstLine, "mit"):
 				licenseType = "MIT"

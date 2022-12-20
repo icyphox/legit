@@ -25,6 +25,14 @@
         </div>
         {{ end }}
       </div>
+{{- if .license }}
+      <details class="license">
+        <summary>
+          <strong>License: </strong>{{- .licensetype -}}
+        </summary>
+        <pre>{{- .license }}</pre>
+      </details>
+{{- end -}}
 {{- if .readme }}
       <article class="readme">
         <pre>
@@ -32,7 +40,6 @@
         </pre>
       </article>
 {{- end -}}
-
       <div class="clone-url">
       <strong>clone</strong>
         <pre>

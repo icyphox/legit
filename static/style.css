@@ -105,7 +105,7 @@ a:hover {
 }
 
 .clone-url {
-  padding-top: 2rem;
+  padding-top: 1rem;
 }
 
 .clone-url pre {
@@ -131,7 +131,7 @@ a:hover {
   grid-template-columns: 20rem minmax(0, 1fr);
   grid-row-gap: 0.8em;
   grid-column-gap: 8rem;
-  margin-bottom: 2em;
+  margin-bottom: 1em;
   padding-bottom: 1em;
   border-bottom: 1.5px solid var(--medium-gray);
 }
@@ -149,6 +149,17 @@ a:hover {
 }
 
 .readme {
+  background: var(--light-gray);
+  padding: 0.5rem;
+}
+
+.license {
+  font-family: var(--mono-font);
+  padding: 0.5rem;
+  margin-bottom: 1em;
+}
+
+.license pre {
   background: var(--light-gray);
   padding: 0.5rem;
 }
