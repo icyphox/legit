@@ -11,6 +11,7 @@ type Config struct {
 	Repo struct {
 		ScanPath   string   `yaml:"scanPath"`
 		Readme     []string `yaml:"readme"`
+		License    []string `yaml:"license"`
 		MainBranch []string `yaml:"mainBranch"`
 	} `yaml:"repo"`
 	Dirs struct {

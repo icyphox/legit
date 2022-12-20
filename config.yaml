@@ -5,6 +5,11 @@ repo:
     - README
     - readme.md
     - README.md
+  license:
+    - license
+    - LICENSE
+    - license.txt
+    - LICENSE.txt
   mainBranch:
     - master
     - main
