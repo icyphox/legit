@@ -55,6 +55,7 @@ These options are fairly self-explanatory, but of note are:
 • repo.scanPath: where all your git repos live (or die). legit doesn't
   traverse subdirs yet.
 • repo.readme: readme files to look for. Markdown isn't rendered.
+• repo.license: license files to look for.
 • repo.mainBranch: main branch names to look for.
 • server.name: used for go-import meta tags and clone URLs.
 
