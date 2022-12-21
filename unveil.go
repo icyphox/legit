@@ -1,30 +1,26 @@
 //go:build openbsd
 // +build openbsd
 
-// Doesn't do anything yet.
-
 package main
 
-/*
-#include <stdlib.h>
-#include <unistd.h>
-*/
-import "C"
-
 import (
-	"fmt"
-	"unsafe"
+	"golang.org/x/sys/unix"
 )
 
 func Unveil(path string, perms string) error {
-	cpath := C.CString(path)
-	defer C.free(unsafe.Pointer(cpath))
-	cperms := C.CString(perms)
-	defer C.free(unsafe.Pointer(cperms))
+	return unix.Unveil(path, perms)
+}
 
-	rv, err := C.unveil(cpath, cperms)
-	if rv != 0 {
-		return fmt.Errorf("unveil(%s, %s) failure (%d)", path, perms, err)
+func UnveilBlock() error {
+	return unix.UnveilBlock()
+}
+
+func UnveilPaths(paths []string, perms string) error {
+	for _, path := range paths {
+		err := Unveil(path, perms)
+		if err != nil {
+			return err
+		}
 	}
-	return nil
+	return UnveilBlock()
 }
