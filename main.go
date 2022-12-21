@@ -20,9 +20,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// for path := range []string{c.Dirs.Static, c.Repo.ScanPath, c.Dirs.Templates} {
-	// 	Unveil(path, "r")
-	// }
+	if err = UnveilPaths([]string{c.Dirs.Static, c.Repo.ScanPath, c.Dirs.Templates}, "r"); err != nil {
+		log.Fatal(err)
+	}
 
 	mux := routes.Handlers(c)
 	addr := fmt.Sprintf("%s:%d", c.Server.Host, c.Server.Port)
