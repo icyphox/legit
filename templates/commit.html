@@ -15,16 +15,23 @@
         <div>{{ .commit.Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</div>
         </div>
 
-        <p>commit: <a href="/{{ .name }}/commit/{{ .commit.This }}">
+        <div>
+        <strong>commit</strong>
+        <p><a href="/{{ .name }}/commit/{{ .commit.This }}">
           {{ .commit.This }}
         </a>
         </p>
+        </div>
+
         {{ if .commit.Parent }}
-        <p>parent: <a href="/{{ .name }}/commit/{{ .commit.Parent }}">
+        <div>
+        <strong>parent</strong>
+        <p><a href="/{{ .name }}/commit/{{ .commit.Parent }}">
           {{ .commit.Parent }}
-        </a>
+        </a></p>
+        </div>
+
         {{ end }}
-        </p>
         <div class="diff-stat">
           <div>
           {{ .stat.FilesChanged }} files changed,
