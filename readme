@@ -70,10 +70,15 @@ NOTES
   can still view bare repos just fine in legit.
 • The default head.html template uses my CDN to fetch fonts -- you may
   or may not want this.
-• Support or cgit-like filters (for readmes etc.) is planned.
 • Pushing over https, while supported, is disabled because auth is a
   pain. Use ssh.
-• "Private" repos only available over Tailscale is planned.
+• Paths are unveil(2)'d on OpenBSD.
+
+
+IDEAS
+
+• "Private" repos only available over Tailscale.
+• Support or cgit-like filters (for readmes etc.).
 
 
 LICENSE
