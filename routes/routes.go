@@ -35,6 +35,10 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 	infos := []info{}
 
 	for _, dir := range dirs {
+		if d.isIgnored(dir.Name()) {
+			continue
+		}
+
 		path := filepath.Join(d.c.Repo.ScanPath, dir.Name())
 		gr, err := git.Open(path, "")
 		if err != nil {
@@ -77,8 +81,13 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
 	name = filepath.Clean(name)
 	path := filepath.Join(d.c.Repo.ScanPath, name)
+
 	gr, err := git.Open(path, "")
 	if err != nil {
 		d.Write404(w)
@@ -136,6 +145,10 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
 	treePath := flow.Param(r.Context(), "...")
 	ref := flow.Param(r.Context(), "ref")
 
@@ -166,6 +179,10 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
 	treePath := flow.Param(r.Context(), "...")
 	ref := flow.Param(r.Context(), "ref")
 
@@ -190,6 +207,10 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
 	ref := flow.Param(r.Context(), "ref")
 
 	path := filepath.Join(d.c.Repo.ScanPath, name)
@@ -224,6 +245,10 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
 	ref := flow.Param(r.Context(), "ref")
 
 	path := filepath.Join(d.c.Repo.ScanPath, name)
@@ -261,6 +286,10 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 	name := flow.Param(r.Context(), "name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
 
 	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, "")
@@ -304,14 +333,4 @@ func (d *deps) ServeStatic(w http.ResponseWriter, r *http.Request) {
 	f = filepath.Clean(filepath.Join(d.c.Dirs.Static, f))
 
 	http.ServeFile(w, r, f)
-}
-
-func getDescription(path string) (desc string) {
-	db, err := os.ReadFile(filepath.Join(path, "description"))
-	if err == nil {
-		desc = string(db)
-	} else {
-		desc = ""
-	}
-	return
 }
