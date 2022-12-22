@@ -25,6 +25,7 @@ func main() {
 	}
 
 	if err := UnveilPaths([]string{
+		"/dev/null",
 		c.Dirs.Static,
 		c.Repo.ScanPath,
 		c.Dirs.Templates,
