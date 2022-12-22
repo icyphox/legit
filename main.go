@@ -23,8 +23,13 @@ func main() {
 	if err := UnveilPaths([]string{
 		c.Dirs.Static,
 		c.Repo.ScanPath,
-		c.Dirs.Templates},
+		c.Dirs.Templates,
+	},
 		"r"); err != nil {
+		log.Fatalf("unveil: %s", err)
+	}
+
+	if err := Unveil("/usr/local/bin/git", "rx"); err != nil {
 		log.Fatalf("unveil: %s", err)
 	}
 

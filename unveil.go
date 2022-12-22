@@ -20,8 +20,7 @@ func UnveilBlock() error {
 
 func UnveilPaths(paths []string, perms string) error {
 	for _, path := range paths {
-		err := Unveil(path, perms)
-		if err != nil {
+		if err := Unveil(path, perms); err != nil {
 			return err
 		}
 	}
