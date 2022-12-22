@@ -20,7 +20,6 @@ html {
 
 pre {
   font-family: var(--mono-font);
-  font-size: 0.8rem;
 }
 
 ::selection {
@@ -220,6 +219,10 @@ a:hover {
   align-items: center;
 }
 
+.refs pre {
+  white-space: pre-wrap;
+}
+
 .line-numbers {
   white-space: pre-line;
   -moz-user-select: -moz-none;
@@ -251,7 +254,7 @@ a:hover {
 .commit-info {
   color: var(--gray);
   padding-bottom: 1.5rem;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
 }
 
 @media (max-width: 600px) {
@@ -275,5 +278,9 @@ a:hover {
 
   .commit-info:not(:last-child) {
     padding-bottom: 1.5rem;
+  }
+
+  pre {
+    font-size: 0.8rem;
   }
 }
