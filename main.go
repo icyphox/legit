@@ -20,16 +20,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := Unveil("/usr/local/bin/git", "rx"); err != nil {
+		log.Fatalf("unveil: %s", err)
+	}
+
 	if err := UnveilPaths([]string{
 		c.Dirs.Static,
 		c.Repo.ScanPath,
 		c.Dirs.Templates,
 	},
 		"r"); err != nil {
-		log.Fatalf("unveil: %s", err)
-	}
-
-	if err := Unveil("/usr/local/bin/git", "rx"); err != nil {
 		log.Fatalf("unveil: %s", err)
 	}
 
