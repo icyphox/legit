@@ -20,9 +20,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = UnveilPaths([]string{c.Dirs.Static, c.Repo.ScanPath, c.Dirs.Templates}, "r")
-	if err != nil {
-		log.Fatalf("unveil: %w", err)
+	if err := UnveilPaths([]string{
+		c.Dirs.Static,
+		c.Repo.ScanPath,
+		c.Dirs.Templates},
+		"r"); err != nil {
+		log.Fatalf("unveil: %s", err)
 	}
 
 	mux := routes.Handlers(c)
