@@ -9,7 +9,7 @@
 
   --sans-font: "InterVar", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
   --display-font: "InterDisplay", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
-  --mono-font: -apple-system, "SF Mono", "Roboto Mono", monospace;
+  --mono-font: "SF Mono", "Input", "Menlo" "Roboto Mono", monospace;
 }
 
 html {
