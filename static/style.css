@@ -118,6 +118,7 @@ a:hover {
 }
 
 .desc {
+  font-weight: normal;
   color: var(--gray);
   font-style: italic;
 }
