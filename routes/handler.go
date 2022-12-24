@@ -1,26 +1,22 @@
 package routes
 
 import (
-	"log"
 	"net/http"
-	"path/filepath"
 
 	"git.icyphox.sh/legit/config"
+	"git.icyphox.sh/legit/git"
 	"github.com/alexedwards/flow"
-	"github.com/sosedoff/gitkit"
 )
 
 type depsWrapper struct {
 	actualDeps deps
-	gitsvc     *gitkit.Server
+	gitsvc     http.Handler
 }
 
 // Checks for gitprotocol-http(5) specific smells; if found, passes
 // the request on to the git http service, else render the web frontend.
 func (dw *depsWrapper) Multiplex(w http.ResponseWriter, r *http.Request) {
 	path := flow.Param(r.Context(), "...")
-	name := flow.Param(r.Context(), "name")
-	name = filepath.Clean(name)
 
 	if r.URL.RawQuery == "service=git-receive-pack" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -41,13 +37,7 @@ func Handlers(c *config.Config) *flow.Mux {
 	mux := flow.New()
 	d := deps{c}
 
-	gitsvc := gitkit.New(gitkit.Config{
-		Dir:        c.Repo.ScanPath,
-		AutoCreate: false,
-	})
-	if err := gitsvc.Setup(); err != nil {
-		log.Fatalf("git server: %s", err)
-	}
+	gitsvc := git.Handler(c.Repo.ScanPath)
 
 	dw := depsWrapper{actualDeps: d, gitsvc: gitsvc}
 
