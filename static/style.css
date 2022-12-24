@@ -213,14 +213,12 @@ a:hover {
   padding-top: 0.7em;
 }
 
-.refs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-}
-
 .refs pre {
   white-space: pre-wrap;
+}
+
+.refs strong {
+  padding-right: 1em;
 }
 
 .line-numbers {
