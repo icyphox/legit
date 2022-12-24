@@ -215,6 +215,7 @@ a:hover {
 
 .refs pre {
   white-space: pre-wrap;
+  padding-bottom: 0.5rem;
 }
 
 .refs strong {
