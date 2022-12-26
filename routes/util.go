@@ -3,15 +3,22 @@ package routes
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
+const defaultDescription = `Unnamed repository; edit this file 'description' to name the repository.`
+
 func getDescription(path string) (desc string) {
-	db, err := os.ReadFile(filepath.Join(path, "description"))
-	if err == nil {
-		desc = string(db)
-	} else {
-		desc = ""
+	data, err := os.ReadFile(filepath.Join(path, ".git", "description"))
+	if err != nil {
+		return ""
 	}
+
+	desc = strings.TrimSpace(string(data))
+	if desc == defaultDescription {
+		return ""
+	}
+
 	return
 }
 
