@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -13,6 +14,8 @@ import (
 	"git.icyphox.sh/legit/git"
 	"github.com/alexedwards/flow"
 	"github.com/dustin/go-humanize"
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/russross/blackfriday/v2"
 )
 
 type deps struct {
@@ -101,10 +104,21 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var readmeContent string
+	var readmeContent template.HTML
 	for _, readme := range d.c.Repo.Readme {
-		readmeContent, _ = gr.FileContent(readme)
-		if readmeContent != "" {
+		ext := filepath.Ext(readme)
+		content, _ := gr.FileContent(readme)
+		if len(content) > 0 {
+			switch ext {
+			case ".md":
+				unsafe := blackfriday.Run([]byte(content), blackfriday.WithExtensions(blackfriday.CommonExtensions))
+				html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+				readmeContent = template.HTML(html)
+			default:
+				readmeContent = template.HTML(
+					fmt.Sprintf(`<pre>%s</pre>`, content),
+				)
+			}
 			break
 		}
 	}
