@@ -110,8 +110,11 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		content, _ := gr.FileContent(readme)
 		if len(content) > 0 {
 			switch ext {
-			case ".md":
-				unsafe := blackfriday.Run([]byte(content), blackfriday.WithExtensions(blackfriday.CommonExtensions))
+			case ".md", ".mkd", ".markdown":
+				unsafe := blackfriday.Run(
+					[]byte(content),
+					blackfriday.WithExtensions(blackfriday.CommonExtensions),
+				)
 				html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 				readmeContent = template.HTML(html)
 			default:
