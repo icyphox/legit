@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -38,6 +39,16 @@ func Read(f string) (*Config, error) {
 	c := Config{}
 	if err := yaml.Unmarshal(b, &c); err != nil {
 		return nil, fmt.Errorf("parsing config: %w", err)
+	}
+
+	if c.Repo.ScanPath, err = filepath.Abs(c.Repo.ScanPath); err != nil {
+		return nil, err
+	}
+	if c.Dirs.Templates, err = filepath.Abs(c.Dirs.Templates); err != nil {
+		return nil, err
+	}
+	if c.Dirs.Static, err = filepath.Abs(c.Dirs.Static); err != nil {
+		return nil, err
 	}
 
 	return &c, nil
