@@ -14,9 +14,20 @@
     <main>
       <div class="index">
       {{ range .info }}
-       <div class="index-name"><a href="/{{ .Name }}">{{ .Name }}</a></div>
-       <div class="desc">{{ .Desc }}</div>
-       <div>{{ .Idle }}</div>
+        {{ if eq (len .Repositories) 1 }}
+          {{ $repo := (index .Repositories 0) }}
+          <div class="index-name"><a href="/{{ $repo.Slug }}">{{ $repo.Name }}</a></div>
+          <div class="desc">{{ $repo.Description }}</div>
+          <div>{{ $repo.LastCommit }}</div>
+        {{ end }}
+        {{ if gt (len .Repositories) 1 }}
+          <div class="index-category">{{ .Name }}/</div><div></div><div></div>
+          {{ range .Repositories }}
+            <div class="index-category-name"><a href="/{{ .Slug }}">{{ .Name }}</a></div>
+            <div class="desc">{{ .Description }}</div>
+            <div>{{ .LastCommit }}</div>
+          {{ end }}
+        {{ end }}
       {{ end }}
       </div>
     </main>

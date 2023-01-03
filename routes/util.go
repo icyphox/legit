@@ -1,13 +1,17 @@
 package routes
 
 import (
+	"context"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"git.icyphox.sh/legit/git"
+	"github.com/alexedwards/flow"
+	"github.com/dustin/go-humanize"
 )
 
 func isGoModule(gr *git.GitRepo) bool {
@@ -35,14 +39,51 @@ func (d *deps) isIgnored(name string) bool {
 	return false
 }
 
-type repoInfo struct {
-	Git      *git.GitRepo
-	Path     string
-	Category string
+type repository struct {
+	Name        string
+	Category    string
+	Path        string
+	Slug        string
+	Description string
+	LastCommit  string
 }
 
-func (d *deps) getAllRepos() ([]repoInfo, error) {
-	repos := []repoInfo{}
+type entry struct {
+	Name         string
+	Repositories []*repository
+}
+
+type entries struct {
+	Children []*entry
+	c        map[string]*entry
+}
+
+func (ent *entries) Add(r repository) {
+	if r.Category == "" {
+		ent.Children = append(ent.Children, &entry{
+			Name:         r.Name,
+			Repositories: []*repository{&r},
+		})
+		return
+	}
+	t, ok := ent.c[r.Category]
+	if !ok {
+		t := &entry{
+			Name:         r.Category,
+			Repositories: []*repository{&r},
+		}
+		ent.c[r.Category] = t
+		ent.Children = append(ent.Children, t)
+		return
+	}
+	t.Repositories = append(t.Repositories, &r)
+}
+
+func (d *deps) getAllRepos() (*entries, error) {
+	entries := &entries{
+		Children: []*entry{},
+		c:        map[string]*entry{},
+	}
 	max := strings.Count(d.c.Repo.ScanPath, string(os.PathSeparator)) + 2
 
 	err := filepath.WalkDir(d.c.Repo.ScanPath, func(path string, de fs.DirEntry, err error) error {
@@ -68,11 +109,18 @@ func (d *deps) getAllRepos() ([]repoInfo, error) {
 					log.Println(err)
 				} else {
 					relpath, _ := filepath.Rel(d.c.Repo.ScanPath, path)
-					repos = append(repos, repoInfo{
-						Git:      repo,
-						Path:     relpath,
-						Category: d.category(path),
-					})
+					category := strings.Split(relpath, string(os.PathSeparator))[0]
+					r := repository{
+						Name:        filepath.Base(path),
+						Category:    category,
+						Path:        path,
+						Slug:        relpath,
+						Description: getDescription(path),
+					}
+					if c, err := repo.LastCommit(); err == nil {
+						r.LastCommit = humanize.Time(c.Author.When)
+					}
+					entries.Add(r)
 					// Since we found a Git repo, we don't want to recurse
 					// further
 					return fs.SkipDir
@@ -81,10 +129,15 @@ func (d *deps) getAllRepos() ([]repoInfo, error) {
 		}
 		return nil
 	})
-
-	return repos, err
+	sort.Slice(entries.Children, func(i, j int) bool {
+		return entries.Children[i].Name < entries.Children[j].Name
+	})
+	return entries, err
 }
 
-func (d *deps) category(path string) string {
-	return strings.TrimPrefix(filepath.Dir(strings.TrimPrefix(path, d.c.Repo.ScanPath)), string(os.PathSeparator))
+func repoPath(ctx context.Context) string {
+	return filepath.Join(
+		filepath.Clean(flow.Param(ctx, "category")),
+		filepath.Clean(flow.Param(ctx, "name")),
+	)
 }

@@ -108,6 +108,15 @@ a:hover {
   min-width: 0;
 }
 
+.index-category {
+  background-color: var(--medium-gray);
+  font-weight: bold;
+}
+
+.index-category-name {
+  padding-left: 0.7em;
+}
+
 .clone-url {
   padding-top: 2rem;
 }
@@ -289,6 +298,14 @@ a:hover {
 
   .index-name:not(:first-child) {
     padding-top: 1.5rem;
+  }
+
+  .index-category {
+    margin-top: 1.5rem;
+  }
+
+  .index-category-name {
+    padding-top: 0.7rem;
   }
 
   .commit-info:not(:last-child) {
