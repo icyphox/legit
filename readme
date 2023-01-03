@@ -59,7 +59,7 @@ These options are fairly self-explanatory, but of note are:
   traverse subdirs yet.
 • repo.readme: readme files to look for. Markdown isn't rendered.
 • repo.mainBranch: main branch names to look for.
-• repo.ignore: repos to ignore.
+• repo.ignore: repos to ignore, relative to scanPath.
 • server.name: used for go-import meta tags and clone URLs.
 
 
