@@ -39,12 +39,23 @@ func Handlers(c *config.Config) *flow.Mux {
 
 	mux.HandleFunc("/", d.Index, "GET")
 	mux.HandleFunc("/static/:file", d.ServeStatic, "GET")
-	mux.HandleFunc("/:name", d.Multiplex, "GET", "POST")
+
+	mux.HandleFunc("/:category/:name/tree/:ref/...", d.RepoTree, "GET")
+	mux.HandleFunc("/:category/:name/blob/:ref/...", d.FileContent, "GET")
+	mux.HandleFunc("/:category/:name/log/:ref", d.Log, "GET")
+	mux.HandleFunc("/:category/:name/commit/:ref", d.Diff, "GET")
+	mux.HandleFunc("/:category/:name/refs", d.Refs, "GET")
+
 	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
 	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")
 	mux.HandleFunc("/:name/log/:ref", d.Log, "GET")
 	mux.HandleFunc("/:name/commit/:ref", d.Diff, "GET")
 	mux.HandleFunc("/:name/refs", d.Refs, "GET")
+
+	mux.HandleFunc("/:category/:name", d.Multiplex, "GET", "POST")
+	mux.HandleFunc("/:name", d.Multiplex, "GET", "POST")
+
+	mux.HandleFunc("/:category/:name/...", d.Multiplex, "GET", "POST")
 	mux.HandleFunc("/:name/...", d.Multiplex, "GET", "POST")
 
 	return mux
