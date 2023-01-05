@@ -1,11 +1,14 @@
 package routes
 
 import (
+	"embed"
 	"net/http"
 
 	"git.icyphox.sh/legit/config"
 	"github.com/alexedwards/flow"
 )
+
+var StaticFiles embed.FS
 
 // Checks for gitprotocol-http(5) specific smells; if found, passes
 // the request on to the git http service, else render the web frontend.
@@ -38,7 +41,7 @@ func Handlers(c *config.Config) *flow.Mux {
 	})
 
 	mux.HandleFunc("/", d.Index, "GET")
-	mux.HandleFunc("/static/:file", d.ServeStatic, "GET")
+	mux.Handle("/static/...", http.FileServer(http.FS(StaticFiles)), "GET")
 	mux.HandleFunc("/:name", d.Multiplex, "GET", "POST")
 	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
 	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")

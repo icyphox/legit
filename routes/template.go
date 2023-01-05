@@ -2,6 +2,7 @@ package routes
 
 import (
 	"bytes"
+	"embed"
 	"html/template"
 	"io"
 	"log"
@@ -12,9 +13,11 @@ import (
 	"git.icyphox.sh/legit/git"
 )
 
+var TmplFiles embed.FS
+
 func (d *deps) Write404(w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := template.Must(template.ParseFS(TmplFiles, tpath))
 	w.WriteHeader(404)
 	if err := t.ExecuteTemplate(w, "404", nil); err != nil {
 		log.Printf("404 template: %s", err)
@@ -23,7 +26,7 @@ func (d *deps) Write404(w http.ResponseWriter) {
 
 func (d *deps) Write500(w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := template.Must(template.ParseFS(TmplFiles, tpath))
 	w.WriteHeader(500)
 	if err := t.ExecuteTemplate(w, "500", nil); err != nil {
 		log.Printf("500 template: %s", err)
@@ -32,7 +35,7 @@ func (d *deps) Write500(w http.ResponseWriter) {
 
 func (d *deps) listFiles(files []git.NiceTree, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := template.Must(template.ParseFS(TmplFiles, tpath))
 
 	data["files"] = files
 	data["meta"] = d.c.Meta
@@ -63,7 +66,7 @@ func countLines(r io.Reader) (int, error) {
 
 func (d *deps) showFile(content string, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := template.Must(template.ParseFS(TmplFiles, tpath))
 
 	lc, err := countLines(strings.NewReader(content))
 	if err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -10,7 +11,17 @@ import (
 	"git.icyphox.sh/legit/routes"
 )
 
+//go:embed templates
+var tmplFiles embed.FS
+
+//go:embed static
+var staticFiles embed.FS
+
 func main() {
+
+	routes.TmplFiles = tmplFiles
+	routes.StaticFiles = staticFiles
+
 	var cfg string
 	flag.StringVar(&cfg, "config", "./config.yaml", "path to config file")
 	flag.Parse()
