@@ -18,10 +18,6 @@ var tmplFiles embed.FS
 var staticFiles embed.FS
 
 func main() {
-
-	routes.TmplFiles = tmplFiles
-	routes.StaticFiles = staticFiles
-
 	var cfg string
 	flag.StringVar(&cfg, "config", "./config.yaml", "path to config file")
 	flag.Parse()
@@ -38,6 +34,13 @@ func main() {
 	},
 		"r"); err != nil {
 		log.Fatalf("unveil: %s", err)
+	}
+
+	if c.Dirs.Templates == "" {
+		routes.TmplFiles = &tmplFiles
+	}
+	if c.Dirs.Static == "" {
+		routes.StaticFiles = &staticFiles
 	}
 
 	mux := routes.Handlers(c)

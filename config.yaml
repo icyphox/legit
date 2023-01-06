@@ -9,8 +9,9 @@ repo:
     - master
     - main
 dirs:
-  templates: ./templates
-  static: ./static
+# uncomment and specify custom path for templates/static below
+#  templates: ./templates
+#  static: ./static
 meta:
   title: git good
   description: i think it's a skill issue

@@ -8,7 +8,7 @@ import (
 	"github.com/alexedwards/flow"
 )
 
-var StaticFiles embed.FS
+var StaticFiles *embed.FS
 
 // Checks for gitprotocol-http(5) specific smells; if found, passes
 // the request on to the git http service, else render the web frontend.
@@ -41,7 +41,15 @@ func Handlers(c *config.Config) *flow.Mux {
 	})
 
 	mux.HandleFunc("/", d.Index, "GET")
-	mux.Handle("/static/...", http.FileServer(http.FS(StaticFiles)), "GET")
+
+	if StaticFiles == nil {
+		//read from file system
+		mux.HandleFunc("/static/:file", d.ServeStatic, "GET")
+	} else {
+		//read embedded static directory
+		mux.Handle("/static/...", http.FileServer(http.FS(StaticFiles)), "GET")
+	}
+
 	mux.HandleFunc("/:name", d.Multiplex, "GET", "POST")
 	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
 	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")
