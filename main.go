@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -9,6 +10,12 @@ import (
 	"git.icyphox.sh/legit/config"
 	"git.icyphox.sh/legit/routes"
 )
+
+//go:embed templates
+var tmplFiles embed.FS
+
+//go:embed static
+var staticFiles embed.FS
 
 func main() {
 	var cfg string
@@ -27,6 +34,13 @@ func main() {
 	},
 		"r"); err != nil {
 		log.Fatalf("unveil: %s", err)
+	}
+
+	if c.Dirs.Templates == "" {
+		routes.TmplFiles = &tmplFiles
+	}
+	if c.Dirs.Static == "" {
+		routes.StaticFiles = &staticFiles
 	}
 
 	mux := routes.Handlers(c)
