@@ -1,5 +1,5 @@
 repo:
-  scanPath: /var/www/git
+  scanPath: /Users/gil/Development/git-test
   readme:
     - readme
     - README
