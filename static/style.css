@@ -158,6 +158,14 @@ a:hover {
   padding: 0.5rem;
 }
 
+.readme ul {
+  padding: revert;
+}
+
+.readme img {
+  max-width: 100%;
+}
+
 .diff {
   margin: 1rem 0 1rem 0;
   padding: 1rem 0 1rem 0;
