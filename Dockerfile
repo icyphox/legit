@@ -10,7 +10,7 @@ RUN go mod download
 RUN go mod verify
 RUN go build -o legit
 
-FROM golang:1.19-alpine
+FROM alpine:latest
 
 WORKDIR /app
 
