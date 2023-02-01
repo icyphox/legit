@@ -3,7 +3,14 @@ package routes
 import (
 	"os"
 	"path/filepath"
+
+	"git.icyphox.sh/legit/git"
 )
+
+func isGoModule(gr *git.GitRepo) bool {
+	_, err := gr.FileContent("go.mod")
+	return err == nil
+}
 
 func getDescription(path string) (desc string) {
 	db, err := os.ReadFile(filepath.Join(path, "description"))

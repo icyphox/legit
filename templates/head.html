@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/static/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdn.icyphox.sh/fonts/inter.css" type="text/css">
     <link rel="icon" type="image/png" size="32x32" href="/static/legit.png">
-    {{ if .servername }}
+    {{ if and .servername .gomod }}
     <meta name="go-import" content="{{ .servername}}/{{ .name }} git https://{{ .servername }}/{{ .name }}">
     {{ end }}
     <!-- other meta tags here -->
