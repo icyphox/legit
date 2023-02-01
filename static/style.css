@@ -180,6 +180,10 @@ a:hover {
   padding: 1rem 0 1rem 0;
 }
 
+.commit-hash, .commit-email {
+  font-family: var(--mono-font);
+}
+
 .commit-email:before {
   content: '<';
 }
@@ -238,21 +242,24 @@ a:hover {
   -webkit-user-select: none;
   -o-user-select: none;
   user-select: none;
+  display: flex;
+  float: left;
+  flex-direction: column;
+  margin-right: 1ch;
 }
 
 .file-wrapper {
-  display: flex;
-  flex-direction: row;
-  grid-template-columns: 1rem minmax(0, 1fr);
-  gap: 1rem;
-  padding: 0.5rem;
   background: var(--light-gray);
+  display: table;
+  padding: 0.5rem
+  width: 100%;
 }
 
 .file-content {
   background: var(--light-gray);
   overflow-y: hidden;
   overflow-x: auto;
+  display: block;
 }
 
 .diff-type {

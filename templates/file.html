@@ -8,18 +8,22 @@
     {{ template "nav" . }}
     <main>
       <p>{{ .path }}</p>
-      <div class="file-wrapper">
-        <div class="line-numbers">
-          {{- range .linecount }}
+      <table class="file-wrapper">
+        <tbody><tr>
+        <td class="line-numbers">
+          <pre>
+            {{- range .linecount }}
 <a id="L{{ . }}" href="#L{{ . }}">{{ . }}</a>
-          {{- end -}}
-        </div>
-        <div class="file-content">
-          <span></span>
+            {{- end -}}
+          </pre>
+        </td>
+        <td class="file-content">
           <pre>
             {{- .content -}}
           </pre>
-        </div>
+        </td>
+        </tbody></tr>
+      </table>
     </main>
   </body>
 </html>
