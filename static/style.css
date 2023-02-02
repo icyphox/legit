@@ -125,7 +125,7 @@ a:hover {
 
 .tree {
   display: grid;
-  grid-template-columns: 8em minmax(0, 1fr);
+  grid-template-columns: 10ch auto 1fr;
   grid-row-gap: 0.5em;
   grid-column-gap: 1em;
   min-width: 0;
@@ -145,8 +145,11 @@ a:hover {
   white-space: pre-wrap;
 }
 
-.mode {
+.mode, .size {
   font-family: var(--mono-font);
+}
+.size {
+  text-align: right;
 }
 
 .readme pre {
