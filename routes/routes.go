@@ -211,6 +211,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
+	data["dotdot"] = filepath.Dir(path)
 
 	if err := t.ExecuteTemplate(w, "log", data); err != nil {
 		log.Println(err)
