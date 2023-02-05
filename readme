@@ -1,10 +1,10 @@
 legit
 -----
 
-A git web frontend written in Go. 
+A git web frontend written in Go.
 
-Pronounced however you like; I prefer channeling my beret-wearing
-Frenchman, and say "Oui, il est le git!"
+Pronounced however you like; I prefer channeling my inner beret-wearing test test
+Frenchman, and saying "Oui, il est le git!"
 
 But yeah it's pretty legit, no cap on god fr fr.
 
@@ -65,7 +65,7 @@ These options are fairly self-explanatory, but of note are:
 
 NOTES
 
-• Run legit behind a TLS terminating proxy like relayd(8) or nginx. 
+• Run legit behind a TLS terminating proxy like relayd(8) or nginx.
 • Cloning only works in bare repos -- this is a limitation inherent to git. You
   can still view bare repos just fine in legit.
 • The default head.html template uses my CDN to fetch fonts -- you may
