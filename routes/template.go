@@ -59,7 +59,7 @@ func countLines(r io.Reader) (int, error) {
 		switch {
 		case err == io.EOF:
 			/* handle last line not having a newline at the end */
-			if bufLen >= 1 && buf[bufLen-1] != '\n' {
+			if bufLen >= 1 && buf[(bufLen-1)%(32*1024)] != '\n' {
 				count++
 			}
 			return count, nil
