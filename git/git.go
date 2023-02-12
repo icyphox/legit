@@ -2,6 +2,7 @@ package git
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -11,6 +12,21 @@ import (
 type GitRepo struct {
 	r *git.Repository
 	h plumbing.Hash
+}
+
+type TagList []*object.Tag
+
+func (self TagList) Len() int {
+	return len(self)
+}
+
+func (self TagList) Swap(i, j int) {
+	self[i], self[j] = self[j], self[i]
+}
+
+// sorting tags in reverse chronological order
+func (self TagList) Less(i, j int) bool {
+	return self[i].Tagger.When.After(self[j].Tagger.When)
 }
 
 func Open(path string, ref string) (*GitRepo, error) {
@@ -94,9 +110,21 @@ func (g *GitRepo) Tags() ([]*object.Tag, error) {
 	tags := []*object.Tag{}
 
 	_ = ti.ForEach(func(t *object.Tag) error {
+		for i, existing := range tags {
+			if existing.Name == t.Name {
+				if t.Tagger.When.After(existing.Tagger.When) {
+					tags[i] = t
+				}
+				return nil
+			}
+		}
 		tags = append(tags, t)
 		return nil
 	})
+
+	var tagList TagList
+	tagList = tags
+	sort.Sort(tagList)
 
 	return tags, nil
 }

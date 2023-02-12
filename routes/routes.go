@@ -151,6 +151,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	data["commits"] = commits
 	data["desc"] = getDescription(path)
 	data["servername"] = d.c.Server.Name
+	data["gomod"] = isGoModule(gr)
 
 	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
 		log.Println(err)
@@ -253,6 +254,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
+	data["dotdot"] = filepath.Dir(path)
 
 	if err := t.ExecuteTemplate(w, "log", data); err != nil {
 		log.Println(err)

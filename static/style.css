@@ -125,7 +125,7 @@ a:hover {
 
 .tree {
   display: grid;
-  grid-template-columns: 8em minmax(0, 1fr);
+  grid-template-columns: 10ch auto 1fr;
   grid-row-gap: 0.5em;
   grid-column-gap: 1em;
   min-width: 0;
@@ -145,8 +145,11 @@ a:hover {
   white-space: pre-wrap;
 }
 
-.mode {
+.mode, .size {
   font-family: var(--mono-font);
+}
+.size {
+  text-align: right;
 }
 
 .readme pre {
@@ -178,6 +181,10 @@ a:hover {
 
 .diff-stat {
   padding: 1rem 0 1rem 0;
+}
+
+.commit-hash, .commit-email {
+  font-family: var(--mono-font);
 }
 
 .commit-email:before {
@@ -238,21 +245,24 @@ a:hover {
   -webkit-user-select: none;
   -o-user-select: none;
   user-select: none;
+  display: flex;
+  float: left;
+  flex-direction: column;
+  margin-right: 1ch;
 }
 
 .file-wrapper {
-  display: flex;
-  flex-direction: row;
-  grid-template-columns: 1rem minmax(0, 1fr);
-  gap: 1rem;
-  padding: 0.5rem;
   background: var(--light-gray);
+  display: table;
+  padding: 0.5rem
+  width: 100%;
 }
 
 .file-content {
   background: var(--light-gray);
   overflow-y: hidden;
   overflow-x: auto;
+  display: block;
 }
 
 .diff-type {

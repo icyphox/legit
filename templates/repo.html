@@ -16,11 +16,11 @@
       <div class="log">
         {{ range .commits }}
         <div>
-          <div><a href="/{{ $repo }}/commit/{{ .Hash.String }}">{{ slice .Hash.String 0 8 }}</a></div>
+          <div><a href="/{{ $repo }}/commit/{{ .Hash.String }}" class="commit-hash">{{ slice .Hash.String 0 8 }}</a></div>
           <pre>{{ .Message }}</pre>
         </div>
         <div class="commit-info">
-          {{ .Author.Name }} <span class="commit-email">{{ .Author.Email }}</span>
+          {{ .Author.Name }} <a href="mailto:{{ .Author.Email }}" class="commit-email">{{ .Author.Email }}</a>
           <div>{{ .Author.When.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</div>
         </div>
         {{ end }}
