@@ -1,0 +1,15 @@
+version: "3"
+services:
+  legit:
+    container_name: legit
+    build:
+      context: ../
+      dockerfile: ../contrib/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    volumes:
+      - /var/www/git:/var/www/git
+      - ../config.yaml:/app/config.yaml
+      - ../static:/app/static
+      - ../templates:/app/templates
