@@ -3,13 +3,13 @@ services:
   legit:
     container_name: legit
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ../contrib/Dockerfile
     restart: unless-stopped
     ports:
       - "5555:5555"
     volumes:
       - /var/www/git:/var/www/git
-      - ./config.yaml:/app/config.yaml
-      - ./static:/app/static
-      - ./templates:/app/templates
+      - ../config.yaml:/app/config.yaml
+      - ../static:/app/static
+      - ../templates:/app/templates
