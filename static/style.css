@@ -252,17 +252,18 @@ a:hover {
 }
 
 .file-wrapper {
+  display: flex;
+  flex-direction: row;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.5rem;
   background: var(--light-gray);
-  display: table;
-  padding: 0.5rem
-  width: 100%;
 }
 
 .file-content {
   background: var(--light-gray);
   overflow-y: hidden;
   overflow-x: auto;
-  display: block;
 }
 
 .diff-type {

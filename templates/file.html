@@ -1,29 +1,23 @@
 {{ define "file" }}
 <html>
 {{ template "head" . }}
-  <title>{{.name }} &mdash; {{ .path }}</title>
-
   {{ template "repoheader" . }}
   <body>
     {{ template "nav" . }}
     <main>
       <p>{{ .path }}</p>
-      <table class="file-wrapper">
-        <tbody><tr>
-        <td class="line-numbers">
-          <pre>
-            {{- range .linecount }}
+      <div class="file-wrapper">
+        <div class="line-numbers">
+          {{- range .linecount }}
 <a id="L{{ . }}" href="#L{{ . }}">{{ . }}</a>
-            {{- end -}}
-          </pre>
-        </td>
-        <td class="file-content">
+          {{- end -}}
+        </div>
+        <div class="file-content">
+          <span></span>
           <pre>
             {{- .content -}}
           </pre>
-        </td>
-        </tbody></tr>
-      </table>
+        </div>
     </main>
   </body>
 </html>

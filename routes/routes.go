@@ -190,6 +190,7 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	data["ref"] = ref
 	data["parent"] = treePath
 	data["desc"] = getDescription(path)
+	data["dotdot"] = filepath.Dir(treePath)
 
 	d.listFiles(files, data, w)
 	return
@@ -254,7 +255,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
-	data["dotdot"] = filepath.Dir(path)
+	data["log"] = true
 
 	if err := t.ExecuteTemplate(w, "log", data); err != nil {
 		log.Println(err)

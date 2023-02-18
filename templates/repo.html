@@ -1,10 +1,5 @@
 {{ define "repo" }}
 <html>
-  <title>{{ .name }}
-    {{ if .parent }}
-    &mdash; {{ .parent }}
-    {{ end }}
-  </title>
 {{ template "head" . }}
 
 {{ template "repoheader" . }}
