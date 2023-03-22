@@ -36,12 +36,8 @@ func main() {
 		log.Fatalf("unveil: %s", err)
 	}
 
-	if c.Dirs.Templates == "" {
-		routes.TmplFiles = &tmplFiles
-	}
-	if c.Dirs.Static == "" {
-		routes.StaticFiles = &staticFiles
-	}
+	routes.TmplFiles = &tmplFiles
+	routes.StaticFiles = &staticFiles
 
 	mux := routes.Handlers(c)
 	addr := fmt.Sprintf("%s:%d", c.Server.Host, c.Server.Port)
