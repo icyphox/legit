@@ -17,7 +17,7 @@ var TmplFiles *embed.FS
 
 func readTemplate(d *deps) *template.Template {
 
-	if TmplFiles == nil {
+	if d.c.Dirs.Templates != "" {
 		//read from file system
 		tpath := filepath.Join(d.c.Dirs.Templates, "*")
 		return template.Must(template.ParseGlob(tpath))

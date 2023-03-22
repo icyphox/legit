@@ -42,7 +42,7 @@ func Handlers(c *config.Config) *flow.Mux {
 
 	mux.HandleFunc("/", d.Index, "GET")
 
-	if StaticFiles == nil {
+	if c.Dirs.Static != "" {
 		//read from file system
 		mux.HandleFunc("/static/:file", d.ServeStatic, "GET")
 	} else {
