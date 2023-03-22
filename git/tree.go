@@ -19,7 +19,7 @@ func (g *GitRepo) FileTree(path string) ([]NiceTree, error) {
 	}
 
 	if path == "" {
-		files = makeNiceTree(tree.Entries)
+		files = makeNiceTree(tree)
 	} else {
 		o, err := tree.FindEntry(path)
 		if err != nil {
@@ -32,7 +32,7 @@ func (g *GitRepo) FileTree(path string) ([]NiceTree, error) {
 				return nil, err
 			}
 
-			files = makeNiceTree(subtree.Entries)
+			files = makeNiceTree(subtree)
 		}
 	}
 
@@ -48,15 +48,17 @@ type NiceTree struct {
 	IsSubtree bool
 }
 
-func makeNiceTree(es []object.TreeEntry) []NiceTree {
+func makeNiceTree(t *object.Tree) []NiceTree {
 	nts := []NiceTree{}
 
-	for _, e := range es {
+	for _, e := range t.Entries {
 		mode, _ := e.Mode.ToOSFileMode()
+		sz, _ := t.Size(e.Name)
 		nts = append(nts, NiceTree{
 			Name:   e.Name,
 			Mode:   mode.String(),
 			IsFile: e.Mode.IsFile(),
+			Size:   sz,
 		})
 	}
 

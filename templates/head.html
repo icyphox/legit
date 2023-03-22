@@ -5,7 +5,27 @@
     <link rel="stylesheet" href="/static/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdn.icyphox.sh/fonts/inter.css" type="text/css">
     <link rel="icon" type="image/png" size="32x32" href="/static/legit.png">
-    {{ if .servername }}
+    {{ if .parent }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }} ({{ .ref }}): {{ .parent }}/</title>
+
+    {{ else if .path }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }} ({{ .ref }}): {{ .path }}</title>
+    {{ else if .files }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }} ({{ .ref }})</title>
+    {{ else if .commit }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }}: {{ .commit.This }}</title>
+    {{ else if .branches }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }}: refs</title>
+    {{ else if .commits }}
+    {{ if .log }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }}: log</title>
+    {{ else }}
+    <title>{{ .meta.Title }} &mdash; {{ .name }}</title>
+    {{ end }}
+    {{ else }}
+    <title>{{ .meta.Title }}</title>
+    {{ end }}
+    {{ if and .servername .gomod }}
     <meta name="go-import" content="{{ .servername}}/{{ .name }} git https://{{ .servername }}/{{ .name }}">
     {{ end }}
     <!-- other meta tags here -->

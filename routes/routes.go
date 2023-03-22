@@ -152,6 +152,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 	data["desc"] = getDescription(path)
 	data["servername"] = d.c.Server.Name
 	data["sshurl"] = "git@" + d.c.Server.Name + ":" + d.c.Repo.ScanPath
+	data["gomod"] = isGoModule(gr)
 
 	if err := t.ExecuteTemplate(w, "repo", data); err != nil {
 		log.Println(err)
@@ -190,6 +191,7 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	data["ref"] = ref
 	data["parent"] = treePath
 	data["desc"] = getDescription(path)
+	data["dotdot"] = filepath.Dir(treePath)
 
 	d.listFiles(files, data, w)
 	return
@@ -254,6 +256,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	data["name"] = name
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
+	data["log"] = true
 
 	if err := t.ExecuteTemplate(w, "log", data); err != nil {
 		log.Println(err)
