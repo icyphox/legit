@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/alexedwards/flow v0.0.0-20220806114457-cf11be9e0e03
-	github.com/bluekeyes/go-gitdiff v0.7.1
+	github.com/bluekeyes/go-gitdiff v0.7.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/go-git/go-billy/v5 v5.4.1
 	github.com/go-git/go-git/v5 v5.6.1
@@ -37,4 +37,4 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
 
-exclude github.com/sergi/go-diff v1.2.0
+replace github.com/sergi/go-diff => github.com/sergi/go-diff v1.1.0
