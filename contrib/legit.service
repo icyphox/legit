@@ -1,0 +1,17 @@
+[Unit]
+Description=legit Server
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+User=git
+Group=git
+ExecStart=/usr/bin/legit -config /etc/legit/config.yaml
+ProtectSystem=strict
+ProtectHome=strict
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+
+[Install]
+WantedBy=multi-user.target
