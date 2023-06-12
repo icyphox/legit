@@ -28,6 +28,10 @@ type Config struct {
 		Host string `yaml:"host"`
 		Port int    `yaml:"port"`
 	} `yaml:"server"`
+	Highlight struct{
+		Enable bool `yaml:"enable"`
+		Style string `yaml:"style"`
+	} `yaml:"highlight"`
 }
 
 func Read(f string) (*Config, error) {
