@@ -2,6 +2,7 @@ package routes
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -10,6 +11,9 @@ import (
 	"strings"
 
 	"git.icyphox.sh/legit/git"
+	"github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 )
 
 func (d *deps) Write404(w http.ResponseWriter) {
@@ -86,8 +90,31 @@ func (d *deps) showFile(content string, data map[string]any, w http.ResponseWrit
 		}
 	}
 
+	style := styles.Get("igor") //Make configurable?
+	if style == nil{
+		style = styles.Fallback
+	}
+	
+	filename := filepath.Base(data["path"].(string))
+	lexer := lexers.Match(filename) // check for errors?
+	if lexer == nil{
+		lexer = lexers.Fallback
+	}
+
+	formatter := html.New(html.WithClasses(true) , html.WithLineNumbers(true) , html.WithLinkableLineNumbers(true, "LX")  )
+	itr , _ := lexer.Tokenise(nil , content)
+	buff := new(bytes.Buffer)
+	_ , err = buff.WriteString("<style>")
+	formatter.WriteCSS(buff , style)
+
+	_ , err = buff.WriteString("</style>")
+
+	err = formatter.Format(buff , style , itr)
+
+	fmt.Println(buff.String())
+
 	data["linecount"] = lines
-	data["content"] = content
+	data["content"] = template.HTML(buff.String())
 	data["meta"] = d.c.Meta
 
 	if err := t.ExecuteTemplate(w, "file", data); err != nil {
