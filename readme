@@ -72,6 +72,9 @@ NOTES
   or may not want this.
 • Pushing over https, while supported, is disabled because auth is a
   pain. Use ssh.
+• Your remote's default branch must point to one of the listed
+  repo.mainBranch. (ref:
+  https://social.alexschroeder.ch/@alex/statuses/01HEA8T69WANTMZSTX0X5YF0WM)
 • Paths are unveil(2)'d on OpenBSD.
 
 
