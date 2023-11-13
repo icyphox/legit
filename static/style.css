@@ -262,7 +262,7 @@ a:hover {
 }
 
 .file-content {
-  background: var(--light-gray);
+  /*background: var(--light-gray);*/
   overflow-y: hidden;
   overflow-x: auto;
 }

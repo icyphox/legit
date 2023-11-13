@@ -7,6 +7,11 @@
     <main>
       <p>{{ .path }}</p>
       <div class="file-wrapper">
+      {{ if .highlight }}
+         <td class="file-content">
+             {{- .content -}}
+          </td>
+      {{ else }}
       <table >
         <tbody><tr>
             <td class="line-numbers">
@@ -23,6 +28,7 @@
             </td>
         </tbody></tr>
       </table>
+      {{end}}
       </div>
     </main>
   </body>

@@ -10,6 +10,10 @@ import (
 	"strings"
 
 	"git.icyphox.sh/legit/git"
+	"github.com/alecthomas/chroma/v2"
+	"github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 )
 
 func (d *deps) Write404(w http.ResponseWriter) {
@@ -69,6 +73,62 @@ func countLines(r io.Reader) (int, error) {
 	}
 }
 
+func doHighlight(filename string, content string, d *deps) (string , bool){
+	
+	if d.c.Highlight.Enable{
+		var style *chroma.Style
+		
+		if d.c.Highlight.Style == "" {
+			style = styles.Get("github")
+		} else {
+			style = styles.Get(d.c.Highlight.Style)
+		}
+
+		if style == nil{
+			style = styles.Fallback
+		}
+
+		lexer := lexers.Match(filename)
+		if lexer == nil{
+			lexer = lexers.Fallback
+		}
+
+		
+		formatter := html.New(
+			html.WithClasses(true),
+			html.WithLineNumbers(true),
+			html.WithLinkableLineNumbers(true, "L"),
+		)
+
+		itr , err := lexer.Tokenise(nil , content)
+		if err != nil{
+			return content, false		
+		}
+		buff := new(bytes.Buffer)
+		_ , err = buff.WriteString("<style>")
+		
+		if err != nil{
+			return content, false
+		}
+
+		formatter.WriteCSS(buff , style)
+
+		_ , err = buff.WriteString("</style>")
+
+		if err != nil{
+			return content, false
+		}
+
+		err = formatter.Format(buff , style , itr)
+
+		if err != nil{
+			return content, false
+		}
+		return buff.String(), true
+	}
+		return content , false
+}
+
 func (d *deps) showFile(content string, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
@@ -86,8 +146,20 @@ func (d *deps) showFile(content string, data map[string]any, w http.ResponseWrit
 		}
 	}
 
+	newContent , hasHighlight := doHighlight(
+		filepath.Base(data["path"].(string)),
+		content,
+		d,
+	)
+	if hasHighlight {
+		data["content"] = template.HTML(newContent)
+		data["highlight"] = true 
+	}else {
+		data["content"] = content
+		data["highlight"] = false
+	}
+
 	data["linecount"] = lines
-	data["content"] = content
 	data["meta"] = d.c.Meta
 
 	if err := t.ExecuteTemplate(w, "file", data); err != nil {

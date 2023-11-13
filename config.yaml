@@ -18,3 +18,6 @@ server:
   name: git.icyphox.sh
   host: 127.0.0.1
   port: 5555
+highlight:
+  enable: true
+  style: igor
