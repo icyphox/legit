@@ -95,3 +95,10 @@ func (d *deps) showFile(content string, data map[string]any, w http.ResponseWrit
 		return
 	}
 }
+
+func (d *deps) showRaw(content string, w http.ResponseWriter) {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(content))
+	return
+}

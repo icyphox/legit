@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"time"
 
 	"git.icyphox.sh/legit/config"
@@ -199,6 +200,11 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
+	var raw bool
+	if rawParam, err := strconv.ParseBool(r.URL.Query().Get("raw")); err == nil {
+		raw = rawParam
+	}
+
 	name := flow.Param(r.Context(), "name")
 	if d.isIgnored(name) {
 		d.Write404(w)
@@ -222,7 +228,11 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	data["desc"] = getDescription(path)
 	data["path"] = treePath
 
-	d.showFile(contents, data, w)
+	if raw {
+		d.showRaw(contents, w)
+	} else {
+		d.showFile(contents, data, w)
+	}
 	return
 }
 
