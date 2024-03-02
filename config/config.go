@@ -16,8 +16,8 @@ type Config struct {
 		Ignore     []string `yaml:"ignore,omitempty"`
 	} `yaml:"repo"`
 	Dirs struct {
-		Templates string `yaml:"templates"`
-		Static    string `yaml:"static"`
+		Templates string `yaml:"templates,omitempty"`
+		Static    string `yaml:"static,omitempty"`
 	} `yaml:"dirs"`
 	Meta struct {
 		Title       string `yaml:"title"`

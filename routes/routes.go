@@ -71,8 +71,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 		return infos[j].d.Before(infos[i].d)
 	})
 
-	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := readTemplate(d)
 
 	data := make(map[string]interface{})
 	data["meta"] = d.c.Meta
@@ -139,8 +138,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := readTemplate(d)
 
 	if len(commits) >= 3 {
 		commits = commits[:3]
@@ -258,8 +256,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := readTemplate(d)
 
 	data := make(map[string]interface{})
 	data["commits"] = commits
@@ -297,8 +294,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := readTemplate(d)
 
 	data := make(map[string]interface{})
 
@@ -343,8 +339,7 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tpath := filepath.Join(d.c.Dirs.Templates, "*")
-	t := template.Must(template.ParseGlob(tpath))
+	t := readTemplate(d)
 
 	data := make(map[string]interface{})
 
