@@ -4,13 +4,12 @@ import (
 	"net/http"
 
 	"git.icyphox.sh/legit/config"
-	"github.com/alexedwards/flow"
 )
 
 // Checks for gitprotocol-http(5) specific smells; if found, passes
 // the request on to the git http service, else render the web frontend.
 func (d *deps) Multiplex(w http.ResponseWriter, r *http.Request) {
-	path := flow.Param(r.Context(), "...")
+	path := r.PathValue("rest")
 
 	if r.URL.RawQuery == "service=git-receive-pack" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -29,23 +28,21 @@ func (d *deps) Multiplex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Handlers(c *config.Config) *flow.Mux {
-	mux := flow.New()
+func Handlers(c *config.Config) *http.ServeMux {
+	mux := http.NewServeMux()
 	d := deps{c}
 
-	mux.NotFound = http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		d.Write404(w)
-	})
-
-	mux.HandleFunc("/", d.Index, "GET")
-	mux.HandleFunc("/static/:file", d.ServeStatic, "GET")
-	mux.HandleFunc("/:name", d.Multiplex, "GET", "POST")
-	mux.HandleFunc("/:name/tree/:ref/...", d.RepoTree, "GET")
-	mux.HandleFunc("/:name/blob/:ref/...", d.FileContent, "GET")
-	mux.HandleFunc("/:name/log/:ref", d.Log, "GET")
-	mux.HandleFunc("/:name/commit/:ref", d.Diff, "GET")
-	mux.HandleFunc("/:name/refs", d.Refs, "GET")
-	mux.HandleFunc("/:name/...", d.Multiplex, "GET", "POST")
+	mux.HandleFunc("GET /", d.Index)
+	mux.HandleFunc("GET /static/{file}", d.ServeStatic)
+	mux.HandleFunc("GET /{name}", d.Multiplex)
+	mux.HandleFunc("POST /{name}", d.Multiplex)
+	mux.HandleFunc("GET /{name}/tree/{ref}/{rest...}", d.RepoTree)
+	mux.HandleFunc("GET /{name}/blob/{ref}/{rest...}", d.FileContent)
+	mux.HandleFunc("GET /{name}/log/{ref}", d.Log)
+	mux.HandleFunc("GET /{name}/commit/{ref}", d.Diff)
+	mux.HandleFunc("GET /{name}/refs/{$}", d.Refs)
+	mux.HandleFunc("GET /{name}/{rest...}", d.Multiplex)
+	mux.HandleFunc("POST /{name}/{rest...}", d.Multiplex)
 
 	return mux
 }

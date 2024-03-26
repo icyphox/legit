@@ -13,7 +13,6 @@ import (
 
 	"git.icyphox.sh/legit/config"
 	"git.icyphox.sh/legit/git"
-	"github.com/alexedwards/flow"
 	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
@@ -85,7 +84,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
 		return
@@ -165,13 +164,13 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
 		return
 	}
-	treePath := flow.Param(r.Context(), "...")
-	ref := flow.Param(r.Context(), "ref")
+	treePath := r.PathValue("rest")
+	ref := r.PathValue("ref")
 
 	name = filepath.Clean(name)
 	path := filepath.Join(d.c.Repo.ScanPath, name)
@@ -200,18 +199,13 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
-	var raw bool
-	if rawParam, err := strconv.ParseBool(r.URL.Query().Get("raw")); err == nil {
-		raw = rawParam
-	}
-
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
 		return
 	}
-	treePath := flow.Param(r.Context(), "...")
-	ref := flow.Param(r.Context(), "ref")
+	treePath := r.PathValue("rest")
+	ref := r.PathValue("ref")
 
 	name = filepath.Clean(name)
 	path := filepath.Join(d.c.Repo.ScanPath, name)
@@ -237,12 +231,12 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
 		return
 	}
-	ref := flow.Param(r.Context(), "ref")
+	ref := r.PathValue("ref")
 
 	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, ref)
@@ -276,12 +270,12 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
 		return
 	}
-	ref := flow.Param(r.Context(), "ref")
+	ref := r.PathValue("ref")
 
 	path := filepath.Join(d.c.Repo.ScanPath, name)
 	gr, err := git.Open(path, ref)
@@ -317,7 +311,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
 		return
@@ -361,7 +355,7 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) ServeStatic(w http.ResponseWriter, r *http.Request) {
-	f := flow.Param(r.Context(), "file")
+	f := r.PathValue("file")
 	f = filepath.Clean(filepath.Join(d.c.Dirs.Static, f))
 
 	http.ServeFile(w, r, f)

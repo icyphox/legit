@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/alexedwards/flow"
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/go-git/go-git/v5/plumbing/format/pktline"
 	"github.com/go-git/go-git/v5/plumbing/protocol/packp"
@@ -15,7 +14,7 @@ import (
 )
 
 func (d *deps) InfoRefs(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	name = filepath.Clean(name)
 
 	repo := filepath.Join(d.c.Repo.ScanPath, name)
@@ -61,7 +60,7 @@ func (d *deps) InfoRefs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) UploadPack(w http.ResponseWriter, r *http.Request) {
-	name := flow.Param(r.Context(), "name")
+	name := r.PathValue("name")
 	name = filepath.Clean(name)
 
 	repo := filepath.Join(d.c.Repo.ScanPath, name)
