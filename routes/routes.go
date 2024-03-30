@@ -199,6 +199,11 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
+	var raw bool
+	if rawParam, err := strconv.ParseBool(r.URL.Query().Get("raw")); err == nil {
+		raw = rawParam
+	}
+
 	name := r.PathValue("name")
 	if d.isIgnored(name) {
 		d.Write404(w)
