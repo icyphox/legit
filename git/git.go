@@ -34,7 +34,10 @@ func Open(path string, ref string) (*GitRepo, error) {
 	g := GitRepo{}
 	g.r, err = git.PlainOpen(path)
 	if err != nil {
-		return nil, fmt.Errorf("opening %s: %w", path, err)
+		g.r, err = git.PlainOpen(path + ".git")
+		if err != nil {
+			return nil, fmt.Errorf("opening %s: %w", path, err)
+		}
 	}
 
 	if ref == "" {

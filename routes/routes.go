@@ -56,10 +56,15 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		name := dir.Name()
+		if name[len(name)-4:] == ".git" {
+			name = name[:len(name)-4]
+		}
+
 		desc := getDescription(path)
 
 		infos = append(infos, info{
-			Name: dir.Name(),
+			Name: name,
 			Desc: desc,
 			Idle: humanize.Time(c.Author.When),
 			d:    c.Author.When,
