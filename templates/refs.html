@@ -14,6 +14,7 @@
         <strong>{{ .Name.Short }}</strong>
         <a href="/{{ $name }}/tree/{{ .Name.Short }}/">browse</a>
         <a href="/{{ $name }}/log/{{ .Name.Short }}">log</a>
+        <a href="/{{ $name }}/archive/{{ .Name.Short }}.tar.gz">tar.gz</a>
         </div>
       {{ end }}
       </div>
@@ -25,6 +26,7 @@
       <strong>{{ .Name }}</strong>
       <a href="/{{ $name }}/tree/{{ .Name }}/">browse</a>
       <a href="/{{ $name }}/log/{{ .Name }}">log</a>
+      <a href="/{{ $name }}/archive/{{ .Name }}.tar.gz">tar.gz</a>
       {{ if .Message }}
       <pre>{{ .Message }}</pre>
       </div>
