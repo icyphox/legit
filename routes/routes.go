@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"compress/gzip"
 	"fmt"
 	"html/template"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"git.icyphox.sh/legit/config"
@@ -233,6 +235,57 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 		d.showFile(contents, data, w)
 	}
 	return
+}
+
+func (d *deps) Archive(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	if d.isIgnored(name) {
+		d.Write404(w)
+		return
+	}
+
+	file := r.PathValue("file")
+
+	// TODO: extend this to add more files compression (e.g.: xz)
+	if !strings.HasSuffix(file, ".tar.gz") {
+		d.Write404(w)
+		return
+	}
+
+	ref := strings.TrimSuffix(file, ".tar.gz")
+
+	// This allows the browser to use a proper name for the file when
+	// downloading
+	filename := fmt.Sprintf("%s-%s.tar.gz", name, ref)
+	setContentDisposition(w, filename)
+	setGZipMIME(w)
+
+	path := filepath.Join(d.c.Repo.ScanPath, name)
+	gr, err := git.Open(path, ref)
+	if err != nil {
+		d.Write404(w)
+		return
+	}
+
+	gw := gzip.NewWriter(w)
+	defer gw.Close()
+
+	prefix := fmt.Sprintf("%s-%s", name, ref)
+	err = gr.WriteTar(gw, prefix)
+	if err != nil {
+		// once we start writing to the body we can't report error anymore
+		// so we are only left with printing the error.
+		log.Println(err)
+		return
+	}
+
+	err = gw.Flush()
+	if err != nil {
+		// once we start writing to the body we can't report error anymore
+		// so we are only left with printing the error.
+		log.Println(err)
+		return
+	}
 }
 
 func (d *deps) Log(w http.ResponseWriter, r *http.Request) {

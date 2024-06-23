@@ -39,6 +39,7 @@ func Handlers(c *config.Config) *http.ServeMux {
 	mux.HandleFunc("GET /{name}/tree/{ref}/{rest...}", d.RepoTree)
 	mux.HandleFunc("GET /{name}/blob/{ref}/{rest...}", d.FileContent)
 	mux.HandleFunc("GET /{name}/log/{ref}", d.Log)
+	mux.HandleFunc("GET /{name}/archive/{file}", d.Archive)
 	mux.HandleFunc("GET /{name}/commit/{ref}", d.Diff)
 	mux.HandleFunc("GET /{name}/refs/{$}", d.Refs)
 	mux.HandleFunc("GET /{name}/{rest...}", d.Multiplex)
