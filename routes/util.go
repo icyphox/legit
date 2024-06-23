@@ -3,6 +3,7 @@ package routes
 import (
 	"io/fs"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -87,4 +88,17 @@ func (d *deps) getAllRepos() ([]repoInfo, error) {
 
 func (d *deps) category(path string) string {
 	return strings.TrimPrefix(filepath.Dir(strings.TrimPrefix(path, d.c.Repo.ScanPath)), string(os.PathSeparator))
+}
+
+func setContentDisposition(w http.ResponseWriter, name string) {
+	h := "inline; filename=\"" + name + "\""
+	w.Header().Add("Content-Disposition", h)
+}
+
+func setGZipMIME(w http.ResponseWriter) {
+	setMIME(w, "application/gzip")
+}
+
+func setMIME(w http.ResponseWriter, mime string) {
+	w.Header().Add("Content-Type", mime)
 }
