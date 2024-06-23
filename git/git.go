@@ -1,8 +1,13 @@
 package git
 
 import (
+	"archive/tar"
 	"fmt"
+	"io"
+	"io/fs"
+	"path"
 	"sort"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -15,6 +20,16 @@ type GitRepo struct {
 }
 
 type TagList []*object.Tag
+
+// infoWrapper wraps the property of a TreeEntry so it can export fs.FileInfo
+// to tar WriteHeader
+type infoWrapper struct {
+	name    string
+	size    int64
+	mode    fs.FileMode
+	modTime time.Time
+	isDir   bool
+}
 
 func (self TagList) Len() int {
 	return len(self)
@@ -153,4 +168,125 @@ func (g *GitRepo) FindMainBranch(branches []string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("unable to find main branch")
+}
+
+// WriteTar writes itself from a tree into a binary tar file format.
+// prefix is root folder to be appended.
+func (g *GitRepo) WriteTar(w io.Writer, prefix string) error {
+	tw := tar.NewWriter(w)
+	defer tw.Close()
+
+	c, err := g.r.CommitObject(g.h)
+	if err != nil {
+		return fmt.Errorf("commit object: %w", err)
+	}
+
+	tree, err := c.Tree()
+	if err != nil {
+		return err
+	}
+
+	walker := object.NewTreeWalker(tree, true, nil)
+	defer walker.Close()
+
+	name, entry, err := walker.Next()
+	for ; err == nil; name, entry, err = walker.Next() {
+		info, err := newInfoWrapper(name, prefix, &entry, tree)
+		if err != nil {
+			return err
+		}
+
+		header, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return err
+		}
+
+		err = tw.WriteHeader(header)
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() {
+			file, err := tree.File(name)
+			if err != nil {
+				return err
+			}
+
+			reader, err := file.Blob.Reader()
+			if err != nil {
+				return err
+			}
+
+			_, err = io.Copy(tw, reader)
+			if err != nil {
+				reader.Close()
+				return err
+			}
+			reader.Close()
+		}
+	}
+
+	return nil
+}
+
+func newInfoWrapper(
+	name string,
+	prefix string,
+	entry *object.TreeEntry,
+	tree *object.Tree,
+) (*infoWrapper, error) {
+	var (
+		size  int64
+		mode  fs.FileMode
+		isDir bool
+	)
+
+	if entry.Mode.IsFile() {
+		file, err := tree.TreeEntryFile(entry)
+		if err != nil {
+			return nil, err
+		}
+		mode = fs.FileMode(file.Mode)
+
+		size, err = tree.Size(name)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		isDir = true
+		mode = fs.ModeDir | fs.ModePerm
+	}
+
+	fullname := path.Join(prefix, name)
+	return &infoWrapper{
+		name:    fullname,
+		size:    size,
+		mode:    mode,
+		modTime: time.Unix(0, 0),
+		isDir:   isDir,
+	}, nil
+}
+
+func (i *infoWrapper) Name() string {
+	return i.name
+}
+
+func (i *infoWrapper) Size() int64 {
+	return i.size
+}
+
+func (i *infoWrapper) Mode() fs.FileMode {
+	return i.mode
+}
+
+func (i *infoWrapper) ModTime() time.Time {
+	return i.modTime
+}
+
+func (i *infoWrapper) IsDir() bool {
+	return i.isDir
+}
+
+func (i *infoWrapper) Sys() any {
+	return nil
 }
