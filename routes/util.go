@@ -17,11 +17,7 @@ func isGoModule(gr *git.GitRepo) bool {
 }
 
 func getDisplayName(name string) string {
-	l := len(name) - 4
-	if name[l:] == ".git" {
-		name = name[:l]
-	}
-	return name
+	return strings.TrimSuffix(name, ".git")
 }
 
 func getDescription(path string) (desc string) {
