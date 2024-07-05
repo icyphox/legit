@@ -40,7 +40,7 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 	infos := []info{}
 
 	for _, dir := range dirs {
-		if d.isIgnored(dir.Name()) {
+		if !dir.IsDir() || d.isIgnored(dir.Name()) {
 			continue
 		}
 
