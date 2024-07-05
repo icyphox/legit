@@ -12,6 +12,19 @@
   --mono-font: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', 'Roboto Mono', Menlo, Consolas, monospace;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark light;
+    --light: #181818;
+    --cyan: #76c7c0;
+    --light-gray: #333;
+    --medium-gray: #444;
+    --gray: #aaa;
+    --dark: #ddd;
+    --darker: #f4f4f4;
+  }
+}
+
 html {
   background: var(--light);
   -webkit-text-size-adjust: none;
