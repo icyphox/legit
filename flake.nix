@@ -36,11 +36,11 @@
             vendorHash = "sha256-EBVD/RzVpxNcwyVHP1c4aKpgNm4zjCz/99LvfA0Oc/Q=";
           };
           docker = pkgs.dockerTools.buildLayeredImage {
-            name = "foo:5000/legit";
+            name = "sini:5000/legit";
             tag = "latest";
-            contents = [ files ];
+            contents = [ files legit ];
             config = {
-              Cmd = "${legit}/bin/legit";
+              Entrypoint = [ "${legit}/bin/legit" ];
               ExposedPorts = { "5555/tcp" = { }; };
             };
           };
