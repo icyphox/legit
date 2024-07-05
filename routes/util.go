@@ -16,6 +16,14 @@ func isGoModule(gr *git.GitRepo) bool {
 	return err == nil
 }
 
+func getDisplayName(name string) string {
+	l := len(name) - 4
+	if name[l:] == ".git" {
+		name = name[:l]
+	}
+	return name
+}
+
 func getDescription(path string) (desc string) {
 	db, err := os.ReadFile(filepath.Join(path, "description"))
 	if err == nil {

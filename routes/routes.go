@@ -33,8 +33,8 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type info struct {
-		Name, Desc, Idle string
-		d                time.Time
+		DisplayName, Name, Desc, Idle string
+		d                             time.Time
 	}
 
 	infos := []info{}
@@ -58,13 +58,16 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		name := dir.Name()
+
 		desc := getDescription(path)
 
 		infos = append(infos, info{
-			Name: dir.Name(),
-			Desc: desc,
-			Idle: humanize.Time(c.Author.When),
-			d:    c.Author.When,
+			DisplayName: getDisplayName(name),
+			Name:        name,
+			Desc:        desc,
+			Idle:        humanize.Time(c.Author.When),
+			d:           c.Author.When,
 		})
 	}
 
@@ -149,6 +152,7 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]any)
 	data["name"] = name
+	data["displayname"] = getDisplayName(name)
 	data["ref"] = mainBranch
 	data["readme"] = readmeContent
 	data["commits"] = commits
@@ -191,6 +195,7 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]any)
 	data["name"] = name
+	data["displayname"] = getDisplayName(name)
 	data["ref"] = ref
 	data["parent"] = treePath
 	data["desc"] = getDescription(path)
@@ -225,6 +230,7 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	contents, err := gr.FileContent(treePath)
 	data := make(map[string]any)
 	data["name"] = name
+	data["displayname"] = getDisplayName(name)
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
 	data["path"] = treePath
@@ -317,6 +323,7 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	data["commits"] = commits
 	data["meta"] = d.c.Meta
 	data["name"] = name
+	data["displayname"] = getDisplayName(name)
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
 	data["log"] = true
@@ -359,6 +366,7 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	data["diff"] = diff.Diff
 	data["meta"] = d.c.Meta
 	data["name"] = name
+	data["displayname"] = getDisplayName(name)
 	data["ref"] = ref
 	data["desc"] = getDescription(path)
 
@@ -402,6 +410,7 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 
 	data["meta"] = d.c.Meta
 	data["name"] = name
+	data["displayname"] = getDisplayName(name)
 	data["branches"] = branches
 	data["tags"] = tags
 	data["desc"] = getDescription(path)
