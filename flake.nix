@@ -38,7 +38,7 @@
           docker = pkgs.dockerTools.buildLayeredImage {
             name = "sini:5000/legit";
             tag = "latest";
-            contents = [ files legit ];
+            contents = [ files legit pkgs.git ];
             config = {
               Entrypoint = [ "${legit}/bin/legit" ];
               ExposedPorts = { "5555/tcp" = { }; };

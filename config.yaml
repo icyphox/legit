@@ -12,9 +12,9 @@ dirs:
   templates: ./templates
   static: ./static
 meta:
-  title: git good
-  description: i think it's a skill issue
+  title: icy does git
+  description: come get your free software
 server:
   name: git.icyphox.sh
-  host: 127.0.0.1
+  host: 0.0.0.0
   port: 5555
