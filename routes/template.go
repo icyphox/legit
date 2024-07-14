@@ -10,6 +10,9 @@ import (
 	"strings"
 
 	"git.icyphox.sh/legit/git"
+	"github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 )
 
 func (d *deps) Write404(w http.ResponseWriter) {
@@ -69,6 +72,48 @@ func countLines(r io.Reader) (int, error) {
 	}
 }
 
+func (d *deps) showFileWithHighlight(name, content string, data map[string]any, w http.ResponseWriter) {
+	tpath := filepath.Join(d.c.Dirs.Templates, "*")
+	t := template.Must(template.ParseGlob(tpath))
+
+	lexer := lexers.Get(name)
+	if lexer == nil {
+		lexer = lexers.Get(".txt")
+	}
+
+	style := styles.Get(d.c.Meta.SyntaxHighlight)
+	if style == nil {
+		style = styles.Get("monokailight")
+	}
+
+	formatter := html.New(
+		html.WithLineNumbers(true),
+		html.WithLinkableLineNumbers(true, "L"),
+	)
+
+	iterator, err := lexer.Tokenise(nil, content)
+	if err != nil {
+		d.Write500(w)
+		return
+	}
+
+	var code bytes.Buffer
+	err = formatter.Format(&code, style, iterator)
+	if err != nil {
+		d.Write500(w)
+		return
+	}
+
+	data["content"] = template.HTML(code.String())
+	data["meta"] = d.c.Meta
+	data["chroma"] = true
+
+	if err := t.ExecuteTemplate(w, "file", data); err != nil {
+		log.Println(err)
+		return
+	}
+}
+
 func (d *deps) showFile(content string, data map[string]any, w http.ResponseWriter) {
 	tpath := filepath.Join(d.c.Dirs.Templates, "*")
 	t := template.Must(template.ParseGlob(tpath))
@@ -89,6 +134,7 @@ func (d *deps) showFile(content string, data map[string]any, w http.ResponseWrit
 	data["linecount"] = lines
 	data["content"] = content
 	data["meta"] = d.c.Meta
+	data["chroma"] = false
 
 	if err := t.ExecuteTemplate(w, "file", data); err != nil {
 		log.Println(err)
