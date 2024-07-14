@@ -19,7 +19,18 @@ type GitRepo struct {
 	h plumbing.Hash
 }
 
-type TagList []*object.Tag
+type TagList struct {
+	refs []*TagReference
+	r    *git.Repository
+}
+
+// TagReference is used to list both tag and non-annotated tags.
+// Non-annotated tags should only contains a reference.
+// Annotated tags should contain its reference and its tag information.
+type TagReference struct {
+	ref *plumbing.Reference
+	tag *object.Tag
+}
 
 // infoWrapper wraps the property of a TreeEntry so it can export fs.FileInfo
 // to tar WriteHeader
@@ -31,17 +42,42 @@ type infoWrapper struct {
 	isDir   bool
 }
 
-func (self TagList) Len() int {
-	return len(self)
+func (self *TagList) Len() int {
+	return len(self.refs)
 }
 
-func (self TagList) Swap(i, j int) {
-	self[i], self[j] = self[j], self[i]
+func (self *TagList) Swap(i, j int) {
+	self.refs[i], self.refs[j] = self.refs[j], self.refs[i]
 }
 
 // sorting tags in reverse chronological order
-func (self TagList) Less(i, j int) bool {
-	return self[i].Tagger.When.After(self[j].Tagger.When)
+func (self *TagList) Less(i, j int) bool {
+	var dateI time.Time
+	var dateJ time.Time
+
+	if self.refs[i].tag != nil {
+		dateI = self.refs[i].tag.Tagger.When
+	} else {
+		c, err := self.r.CommitObject(self.refs[i].ref.Hash())
+		if err != nil {
+			dateI = time.Now()
+		} else {
+			dateI = c.Committer.When
+		}
+	}
+
+	if self.refs[j].tag != nil {
+		dateJ = self.refs[j].tag.Tagger.When
+	} else {
+		c, err := self.r.CommitObject(self.refs[j].ref.Hash())
+		if err != nil {
+			dateJ = time.Now()
+		} else {
+			dateJ = c.Committer.When
+		}
+	}
+
+	return dateI.After(dateJ)
 }
 
 func Open(path string, ref string) (*GitRepo, error) {
@@ -116,31 +152,36 @@ func (g *GitRepo) FileContent(path string) (string, error) {
 	}
 }
 
-func (g *GitRepo) Tags() ([]*object.Tag, error) {
-	ti, err := g.r.TagObjects()
+func (g *GitRepo) Tags() ([]*TagReference, error) {
+	iter, err := g.r.Tags()
 	if err != nil {
 		return nil, fmt.Errorf("tag objects: %w", err)
 	}
 
-	tags := []*object.Tag{}
+	tags := make([]*TagReference, 0)
 
-	_ = ti.ForEach(func(t *object.Tag) error {
-		for i, existing := range tags {
-			if existing.Name == t.Name {
-				if t.Tagger.When.After(existing.Tagger.When) {
-					tags[i] = t
-				}
-				return nil
-			}
+	if err := iter.ForEach(func(ref *plumbing.Reference) error {
+		obj, err := g.r.TagObject(ref.Hash())
+		switch err {
+		case nil:
+			tags = append(tags, &TagReference{
+				ref: ref,
+				tag: obj,
+			})
+		case plumbing.ErrObjectNotFound:
+			tags = append(tags, &TagReference{
+				ref: ref,
+			})
+		default:
+			return err
 		}
-		tags = append(tags, t)
 		return nil
-	})
+	}); err != nil {
+		return nil, err
+	}
 
-	var tagList TagList
-	tagList = tags
+	tagList := &TagList{r: g.r, refs: tags}
 	sort.Sort(tagList)
-
 	return tags, nil
 }
 
@@ -289,4 +330,15 @@ func (i *infoWrapper) IsDir() bool {
 
 func (i *infoWrapper) Sys() any {
 	return nil
+}
+
+func (t *TagReference) Name() string {
+	return t.ref.Name().Short()
+}
+
+func (t *TagReference) Message() string {
+	if t.tag != nil {
+		return t.tag.Message
+	}
+	return ""
 }
