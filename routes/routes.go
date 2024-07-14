@@ -225,6 +225,10 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contents, err := gr.FileContent(treePath)
+	if err != nil {
+		d.Write500(w)
+		return
+	}
 	data := make(map[string]any)
 	data["name"] = name
 	data["displayname"] = getDisplayName(name)
@@ -235,9 +239,12 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	if raw {
 		d.showRaw(contents, w)
 	} else {
-		d.showFile(contents, data, w)
+		if d.c.Meta.SyntaxHighlight == "" {
+			d.showFile(contents, data, w)
+		} else {
+			d.showFileWithHighlight(treePath, contents, data, w)
+		}
 	}
-	return
 }
 
 func (d *deps) Archive(w http.ResponseWriter, r *http.Request) {

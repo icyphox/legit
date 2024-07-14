@@ -21,8 +21,9 @@ type Config struct {
 		Static    string `yaml:"static"`
 	} `yaml:"dirs"`
 	Meta struct {
-		Title       string `yaml:"title"`
-		Description string `yaml:"description"`
+		Title           string `yaml:"title"`
+		Description     string `yaml:"description"`
+		SyntaxHighlight string `yaml:"syntaxHighlight"`
 	} `yaml:"meta"`
 	Server struct {
 		Name string `yaml:"name,omitempty"`

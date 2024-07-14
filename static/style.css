@@ -274,6 +274,13 @@ a:hover {
   overflow-x: auto;
 }
 
+.chroma-file-wrapper {
+  display: flex;
+  flex-direction: row;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  overflow-x: auto;
+}
+
 .file-content {
   background: var(--light-gray);
   overflow-y: hidden;

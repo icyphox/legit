@@ -6,8 +6,13 @@
     {{ template "nav" . }}
     <main>
       <p>{{ .path }} (<a style="color: gray" href="?raw=true">view raw</a>)</p>
+      {{if .chroma }}
+      <div class="chroma-file-wrapper">
+      {{ .content }}
+      </div>
+      {{else}}
       <div class="file-wrapper">
-      <table >
+      <table>
         <tbody><tr>
             <td class="line-numbers">
               <pre>
@@ -24,6 +29,7 @@
         </tbody></tr>
       </table>
       </div>
+      {{end}}
     </main>
   </body>
 </html>
