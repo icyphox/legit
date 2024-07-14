@@ -62,6 +62,10 @@ These options are fairly self-explanatory, but of note are:
 • repo.mainBranch: main branch names to look for.
 • repo.ignore: repos to ignore, relative to scanPath.
 • server.name: used for go-import meta tags and clone URLs.
+• meta.syntaxHighlight: used for picking which syntax theme render. Leave it
+  blank or remove it to disable and use native theme. If this field is set with
+  a invalid theme, it will fallback to "monokailight". For more information
+  about themes check chroma's gallery[1].
 
 
 NOTES
@@ -85,3 +89,5 @@ IDEAS
 LICENSE
 
 legit is licensed under MIT.
+
+[1]: https://swapoff.org/chroma/playground/
