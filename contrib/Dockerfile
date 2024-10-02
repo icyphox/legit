@@ -1,16 +1,14 @@
-FROM golang:1.19-alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
-COPY . ./
-
-RUN apk add gcc musl-dev libc-dev
-
+COPY . .
 RUN go mod download
 RUN go mod verify
+
 RUN go build -o legit
 
-FROM alpine:latest
+FROM scratch AS build-release-stage
 
 WORKDIR /app
 
@@ -22,4 +20,3 @@ COPY --from=builder /app/legit ./
 EXPOSE 5555
 
 CMD ["./legit"]
-
