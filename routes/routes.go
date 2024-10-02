@@ -40,11 +40,12 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 	infos := []info{}
 
 	for _, dir := range dirs {
-		if !dir.IsDir() || d.isIgnored(dir.Name()) {
+		name := dir.Name()
+		if !dir.IsDir() || d.isIgnored(name) || d.isHidden(name) {
 			continue
 		}
 
-		path := filepath.Join(d.c.Repo.ScanPath, dir.Name())
+		path := filepath.Join(d.c.Repo.ScanPath, name)
 		gr, err := git.Open(path, "")
 		if err != nil {
 			log.Println(err)
@@ -58,14 +59,10 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		name := dir.Name()
-
-		desc := getDescription(path)
-
 		infos = append(infos, info{
 			DisplayName: getDisplayName(name),
 			Name:        name,
-			Desc:        desc,
+			Desc:        getDescription(path),
 			Idle:        humanize.Time(c.Author.When),
 			d:           c.Author.When,
 		})
