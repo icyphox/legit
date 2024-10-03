@@ -1,10 +1,9 @@
-version: "3"
 services:
   legit:
     container_name: legit
     build:
       context: ../
-      dockerfile: ../contrib/Dockerfile
+      dockerfile: contrib/Dockerfile
     restart: unless-stopped
     ports:
       - "5555:5555"
