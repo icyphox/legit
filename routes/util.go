@@ -30,8 +30,8 @@ func getDescription(path string) (desc string) {
 	return
 }
 
-func (d *deps) isHidden(name string) bool {
-	for _, i := range d.c.Repo.Hide {
+func (d *deps) isUnlisted(name string) bool {
+	for _, i := range d.c.Repo.Unlisted {
 		if name == i {
 			return true
 		}

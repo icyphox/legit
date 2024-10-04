@@ -13,8 +13,8 @@ type Config struct {
 		ScanPath   string   `yaml:"scanPath"`
 		Readme     []string `yaml:"readme"`
 		MainBranch []string `yaml:"mainBranch"`
-		Hide       []string `yaml:"hide,omitempty"`
 		Ignore     []string `yaml:"ignore,omitempty"`
+		Unlisted   []string `yaml:"unlisted,omitempty"`
 	} `yaml:"repo"`
 	Dirs struct {
 		Templates string `yaml:"templates"`
