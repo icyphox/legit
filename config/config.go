@@ -14,6 +14,7 @@ type Config struct {
 		Readme     []string `yaml:"readme"`
 		MainBranch []string `yaml:"mainBranch"`
 		Ignore     []string `yaml:"ignore,omitempty"`
+		Unlisted   []string `yaml:"unlisted,omitempty"`
 	} `yaml:"repo"`
 	Dirs struct {
 		Templates string `yaml:"templates"`

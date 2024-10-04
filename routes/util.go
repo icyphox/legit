@@ -30,6 +30,16 @@ func getDescription(path string) (desc string) {
 	return
 }
 
+func (d *deps) isUnlisted(name string) bool {
+	for _, i := range d.c.Repo.Unlisted {
+		if name == i {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (d *deps) isIgnored(name string) bool {
 	for _, i := range d.c.Repo.Ignore {
 		if name == i {
