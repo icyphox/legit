@@ -63,10 +63,10 @@ These options are fairly self-explanatory, but of note are:
 • repo.ignore: repos to ignore, relative to scanPath.
 • repo.unlisted: repos to hide, relative to scanPath.
 • server.name: used for go-import meta tags and clone URLs.
-• meta.syntaxHighlight: used for picking which syntax theme render. Leave it
-  blank or remove it to disable and use native theme. If this field is set with
-  a invalid theme, it will fallback to "monokailight". For more information
-  about themes check chroma's gallery[1].
+• meta.syntaxHighlight: this is used to select the syntax theme to render. If left
+  blank or removed, the native theme will be used. If an invalid theme is set in this field,
+  it will default to "monokailight". For more information
+  about themes, please refer to chroma's gallery [1].
 
 
 NOTES
@@ -79,16 +79,11 @@ NOTES
 • Pushing over https, while supported, is disabled because auth is a
   pain. Use ssh.
 • Paths are unveil(2)'d on OpenBSD.
-
-
-IDEAS
-
-• "Private" repos only available over Tailscale.
-• Support or cgit-like filters (for readmes etc.).
-
+• Docker images are available ghcr.io/icyphox/legit:{master,latest,vX.Y.Z}. [2]
 
 LICENSE
 
 legit is licensed under MIT.
 
 [1]: https://swapoff.org/chroma/playground/
+[2]: https://github.com/icyphox/legit/pkgs/container/legit
