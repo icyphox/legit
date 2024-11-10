@@ -1,4 +1,5 @@
 :root {
+  --white: #fff;white
   --light: #f4f4f4;
   --cyan: #509c93;
   --light-gray: #eee;
@@ -7,8 +8,8 @@
   --dark: #444;
   --darker: #222;
 
-  --sans-font: "InterVar", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
-  --display-font: "InterDisplay", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  --sans-font: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  --display-font: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
   --mono-font: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', 'Roboto Mono', Menlo, Consolas, monospace;
 }
 
@@ -26,9 +27,13 @@
 }
 
 html {
-  background: var(--light);
+  background: var(--white);
   -webkit-text-size-adjust: none;
   font-family: var(--sans-font);
+  font-weight: 380;
+  font-feature-settings: "ss03" 1, "ss04" 1, "ss0h" 1, "ss06" 1, "ss07" 1, "ss08" 1, "ss09" 1;
+  font-variant-ligatures: discretionary-ligatures;
+  font-variant-ligatures: common-ligatures;
 }
 
 pre {
@@ -58,9 +63,12 @@ main, footer {
   line-height: 160%;
 }
 
-main h1, h2, h3, strong {
+header h1, h2, h3 {
   font-family: var(--display-font);
-  font-weight: 500;
+}
+
+h2 {
+  font-weight: 400;
 }
 
 strong {
@@ -68,7 +76,6 @@ strong {
 }
 
 main h1 {
-  font-size: 20px;
   padding: 10px 0 10px 0;
 }
 
@@ -167,6 +174,7 @@ a:hover {
 
 .readme pre {
   white-space: pre-wrap;
+  overflow-x: auto;
 }
 
 .readme {
@@ -235,7 +243,7 @@ a:hover {
 }
 
 .ref {
-  font-family: var(--display-font);
+  font-family: var(--sans-font);
   font-size: 14px;
   color: var(--gray);
   display: inline-block;
