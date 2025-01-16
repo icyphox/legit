@@ -48,6 +48,7 @@ Example config.yaml:
     meta:
       title: git good
       description: i think it's a skill issue
+      syntaxHighlight: monokailight
     server:
       name: git.icyphox.sh
       host: 127.0.0.1
@@ -74,8 +75,6 @@ NOTES
 • Run legit behind a TLS terminating proxy like relayd(8) or nginx.
 • Cloning only works in bare repos -- this is a limitation inherent to git. You
   can still view non-bare repos just fine in legit.
-• The default head.html template uses my CDN to fetch fonts -- you may
-  or may not want this.
 • Pushing over https, while supported, is disabled because auth is a
   pain. Use ssh.
 • Paths are unveil(2)'d on OpenBSD.

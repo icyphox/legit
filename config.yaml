@@ -14,7 +14,6 @@ dirs:
 meta:
   title: icy does git
   description: come get your free software
-  syntaxHighlight: monokailight
 server:
   name: git.icyphox.sh
   host: 0.0.0.0

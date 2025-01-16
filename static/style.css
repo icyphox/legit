@@ -8,8 +8,8 @@
   --dark: #444;
   --darker: #222;
 
-  --sans-font: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
-  --display-font: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", sans-serif;
+  --sans-font: -apple-system, BlinkMacSystemFont, "Inter", "Roboto", "Segoe UI", sans-serif;
+  --display-font: -apple-system, BlinkMacSystemFont, "Inter", "Roboto", "Segoe UI", sans-serif;
   --mono-font: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', 'Roboto Mono', Menlo, Consolas, monospace;
 }
 
