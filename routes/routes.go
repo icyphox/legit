@@ -121,8 +121,9 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 				html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 				readmeContent = template.HTML(html)
 			default:
+				safe := bluemonday.UGCPolicy().SanitizeBytes([]byte(content))
 				readmeContent = template.HTML(
-					fmt.Sprintf(`<pre>%s</pre>`, content),
+					fmt.Sprintf(`<pre>%s</pre>`, safe),
 				)
 			}
 			break
