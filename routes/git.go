@@ -8,13 +8,19 @@ import (
 	"path/filepath"
 
 	"git.icyphox.sh/legit/git/service"
+	securejoin "github.com/cyphar/filepath-securejoin"
 )
 
 func (d *deps) InfoRefs(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	name = filepath.Clean(name)
 
-	repo := filepath.Join(d.c.Repo.ScanPath, name)
+	repo, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
 
 	w.Header().Set("content-type", "application/x-git-upload-pack-advertisement")
 	w.WriteHeader(http.StatusOK)
@@ -35,7 +41,12 @@ func (d *deps) UploadPack(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	name = filepath.Clean(name)
 
-	repo := filepath.Join(d.c.Repo.ScanPath, name)
+	repo, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
 
 	w.Header().Set("content-type", "application/x-git-upload-pack-result")
 	w.Header().Set("Connection", "Keep-Alive")

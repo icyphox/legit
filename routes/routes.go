@@ -15,6 +15,7 @@ import (
 
 	"git.icyphox.sh/legit/config"
 	"git.icyphox.sh/legit/git"
+	securejoin "github.com/cyphar/filepath-securejoin"
 	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
@@ -45,7 +46,13 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		path := filepath.Join(d.c.Repo.ScanPath, name)
+		path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+		if err != nil {
+			log.Printf("securejoin error: %v", err)
+			d.Write404(w)
+			return
+		}
+
 		gr, err := git.Open(path, "")
 		if err != nil {
 			log.Println(err)
@@ -92,7 +99,12 @@ func (d *deps) RepoIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	name = filepath.Clean(name)
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
 
 	gr, err := git.Open(path, "")
 	if err != nil {
@@ -177,7 +189,12 @@ func (d *deps) RepoTree(w http.ResponseWriter, r *http.Request) {
 	ref := r.PathValue("ref")
 
 	name = filepath.Clean(name)
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -218,7 +235,13 @@ func (d *deps) FileContent(w http.ResponseWriter, r *http.Request) {
 	ref := r.PathValue("ref")
 
 	name = filepath.Clean(name)
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
+
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -271,7 +294,13 @@ func (d *deps) Archive(w http.ResponseWriter, r *http.Request) {
 	setContentDisposition(w, filename)
 	setGZipMIME(w)
 
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
+
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -307,7 +336,13 @@ func (d *deps) Log(w http.ResponseWriter, r *http.Request) {
 	}
 	ref := r.PathValue("ref")
 
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
+
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -347,7 +382,12 @@ func (d *deps) Diff(w http.ResponseWriter, r *http.Request) {
 	}
 	ref := r.PathValue("ref")
 
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
 	gr, err := git.Open(path, ref)
 	if err != nil {
 		d.Write404(w)
@@ -388,7 +428,13 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := filepath.Join(d.c.Repo.ScanPath, name)
+	path, err := securejoin.SecureJoin(d.c.Repo.ScanPath, name)
+	if err != nil {
+		log.Printf("securejoin error: %v", err)
+		d.Write404(w)
+		return
+	}
+
 	gr, err := git.Open(path, "")
 	if err != nil {
 		d.Write404(w)
@@ -428,7 +474,12 @@ func (d *deps) Refs(w http.ResponseWriter, r *http.Request) {
 
 func (d *deps) ServeStatic(w http.ResponseWriter, r *http.Request) {
 	f := r.PathValue("file")
-	f = filepath.Clean(filepath.Join(d.c.Dirs.Static, f))
+	f = filepath.Clean(f)
+	f, err := securejoin.SecureJoin(d.c.Dirs.Static, f)
+	if err != nil {
+		d.Write404(w)
+		return
+	}
 
 	http.ServeFile(w, r, f)
 }
