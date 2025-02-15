@@ -78,9 +78,8 @@
           {{ if .IsBinary }}
           <p>Not showing binary file.</p>
           {{ else }}
-            <pre>
+            <pre><span style="display: block">{{- .Header -}}</span>
             {{- range .TextFragments -}}
-            <p>{{- .Header -}}</p>
             {{- range .Lines -}}
               {{- if eq .Op.String "+" -}}
               <span class="diff-add">{{ .String }}</span>
