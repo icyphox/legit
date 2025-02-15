@@ -2,11 +2,11 @@
   <nav>
     <ul>
     {{ if .name }}
-    <li><a href="/{{ .name }}">summary</a>
-    <li><a href="/{{ .name }}/refs">refs</a>
+    <li><a href="/{{ .name }}">summary</a></li>
+    <li><a href="/{{ .name }}/refs">refs</a></li>
       {{ if .ref }}
-      <li><a href="/{{ .name }}/tree/{{ .ref }}/">tree</a>
-      <li><a href="/{{ .name }}/log/{{ .ref }}">log</a>
+      <li><a href="/{{ .name }}/tree/{{ .ref }}/">tree</a></li>
+      <li><a href="/{{ .name }}/log/{{ .ref }}">log</a></li>
       {{ end }}
     {{ end }}
     </ul>
