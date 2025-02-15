@@ -1,10 +1,11 @@
 {{ define "tree" }}
+<!DOCTYPE html>
 <html>
 
 {{ template "head" . }}
 
-  {{ template "repoheader" . }}
   <body>
+    {{ template "repoheader" . }}
     {{ template "nav" . }}
     <main>
       {{ $repo := .name }}

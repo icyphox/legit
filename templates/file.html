@@ -1,8 +1,9 @@
 {{ define "file" }}
+<!DOCTYPE html>
 <html>
   {{ template "head" . }}
-  {{ template "repoheader" . }}
   <body>
+    {{ template "repoheader" . }}
     {{ template "nav" . }}
     <main>
       <p>{{ .path }} (<a style="color: gray" href="?raw=true">view raw</a>)</p>
@@ -26,7 +27,7 @@
              {{- .content -}}
               </pre>
             </td>
-        </tbody></tr>
+        </tr></tbody>
       </table>
       </div>
       {{end}}

@@ -1,9 +1,10 @@
 {{ define "refs" }}
+<!DOCTYPE html>
 <html>
 {{ template "head" . }}
 
-  {{ template "repoheader" . }}
   <body>
+    {{ template "repoheader" . }}
     {{ template "nav" . }}
     <main>
       {{ $name := .name }}
