@@ -42,11 +42,11 @@
           <div>
             <br>
             <strong>jump to</strong>
-            {{ range .diff }}
             <ul>
+            {{ range .diff }}
             <li><a href="#{{ .Name.New }}">{{ .Name.New }}</a></li>
-            </ul>
             {{ end }}
+            </ul>
           </div>
         </div>
       </section>
