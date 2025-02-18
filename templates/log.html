@@ -10,7 +10,15 @@
       <div class="log">
         {{ range .commits }}
         <div>
-          <div><a href="/{{ $repo }}/commit/{{ .Commit.Hash.String }}" class="commit-hash">{{ slice .Commit.Hash.String 0 8 }}</a></div>
+          <div>
+              <a href="/{{ $repo }}/commit/{{ .Commit.Hash.String }}" class="commit-hash">{{ slice .Commit.Hash.String 0 8 }}</a>
+              {{ if .HasReference }}
+              —
+              {{ range $ref := .References }}
+              <a href="/{{ $repo }}/tree/{{ $ref.Name.Short }}" class="commit-hash">{{ $ref.Name.Short }}</a>
+              {{ end }}
+              {{ end }}
+          </div>
           <pre>{{ .Commit.Message }}</pre>
         </div>
         <div class="commit-info">
