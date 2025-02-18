@@ -70,8 +70,8 @@ func (d *deps) Index(w http.ResponseWriter, r *http.Request) {
 			DisplayName: getDisplayName(name),
 			Name:        name,
 			Desc:        getDescription(path),
-			Idle:        humanize.Time(c.Author.When),
-			d:           c.Author.When,
+			Idle:        humanize.Time(c.Commit().Author.When),
+			d:           c.Commit().Author.When,
 		})
 	}
 

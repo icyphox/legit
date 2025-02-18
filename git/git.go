@@ -32,6 +32,12 @@ type TagReference struct {
 	tag *object.Tag
 }
 
+// CommitReference aggregate all the references for a given commit
+type CommitReference struct {
+	commit *object.Commit
+	refs   []*plumbing.Reference
+}
+
 // infoWrapper wraps the property of a TreeEntry so it can export fs.FileInfo
 // to tar WriteHeader
 type infoWrapper struct {
@@ -104,27 +110,81 @@ func Open(path string, ref string) (*GitRepo, error) {
 	return &g, nil
 }
 
-func (g *GitRepo) Commits() ([]*object.Commit, error) {
+func (g *GitRepo) Commits() ([]*CommitReference, error) {
 	ci, err := g.r.Log(&git.LogOptions{From: g.h})
 	if err != nil {
 		return nil, fmt.Errorf("commits from ref: %w", err)
 	}
 
-	commits := []*object.Commit{}
+	commitRefs := []*CommitReference{}
 	ci.ForEach(func(c *object.Commit) error {
-		commits = append(commits, c)
+		commitRefs = append(commitRefs, &CommitReference{commit: c})
 		return nil
 	})
 
-	return commits, nil
+	// new we fetch for possible tags for each commit
+	iter, err := g.r.References()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := iter.ForEach(func(ref *plumbing.Reference) error {
+		for _, c := range commitRefs {
+			obj, err := g.r.TagObject(ref.Hash())
+			switch err {
+			case nil:
+				if obj.Target == c.commit.Hash {
+					c.AddReference(ref)
+				}
+			case plumbing.ErrObjectNotFound:
+				if c.commit.Hash == ref.Hash() {
+					c.AddReference(ref)
+				}
+			default:
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return commitRefs, nil
 }
 
-func (g *GitRepo) LastCommit() (*object.Commit, error) {
+func (g *GitRepo) LastCommit() (*CommitReference, error) {
 	c, err := g.r.CommitObject(g.h)
 	if err != nil {
 		return nil, fmt.Errorf("last commit: %w", err)
 	}
-	return c, nil
+
+	iter, err := g.r.Tags()
+	if err != nil {
+		return nil, err
+	}
+
+	commitRef := &CommitReference{commit: c}
+	if err := iter.ForEach(func(ref *plumbing.Reference) error {
+		obj, err := g.r.TagObject(ref.Hash())
+		switch err {
+		case nil:
+			if obj.Target == commitRef.commit.Hash {
+				commitRef.AddReference(ref)
+			}
+		case plumbing.ErrObjectNotFound:
+			if commitRef.commit.Hash == ref.Hash() {
+				commitRef.AddReference(ref)
+			}
+		default:
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return commitRef, nil
 }
 
 func (g *GitRepo) FileContent(path string) (string, error) {
@@ -341,4 +401,20 @@ func (t *TagReference) Message() string {
 		return t.tag.Message
 	}
 	return ""
+}
+
+func (c *CommitReference) Commit() *object.Commit {
+	return c.commit
+}
+
+func (c *CommitReference) HasReference() bool {
+	return len(c.refs) > 0
+}
+
+func (c *CommitReference) References() []*plumbing.Reference {
+	return c.refs
+}
+
+func (c *CommitReference) AddReference(ref *plumbing.Reference) {
+	c.refs = append(c.refs, ref)
 }
